@@ -1,133 +1,261 @@
-# Form Generator with Shareable Links
+# 📋 Form Generator with Advanced Logic & Shareable Links
 
-A powerful, web-based form generator that creates shareable links for surveys and data collection with built-in screening capabilities.
+A powerful, feature-rich form generator that creates dynamic, shareable forms with advanced conditional logic, skip patterns, and comprehensive analytics. Available in both standalone HTML and Streamlit versions.
 
-## 🌟 Features
+## 🌟 Key Features
 
-- **Visual Form Builder**: Drag-and-drop interface for creating forms
-- **Multiple Question Types**: Text, multiple choice, checkboxes, dropdowns, scales, grids, and more
-- **Shareable Links**: Generate unique URLs for each form
-- **Response Collection**: Collect and manage responses with screening status
-- **Data Export**: Export responses as CSV files
-- **Skip Logic**: Conditional questions based on previous answers
-- **Mobile Responsive**: Works on all devices
-- **Embed Support**: Generate iframe codes for website integration
+### 🏗️ Advanced Form Building
+- **Multiple Question Types**: Short text, paragraphs, multiple choice, checkboxes, dropdowns, numbers, emails, scales, Likert scales, and grids
+- **Conditional Logic**: Skip logic, conditional question hiding, and dynamic option filtering
+- **Smart Validation**: Required field validation with custom error messages
+- **Preview Mode**: Test your forms before publishing
+
+### 🔀 Intelligent Flow Control
+- **Skip Logic**: Jump to specific questions or end forms based on user responses
+- **Conditional Questions**: Show/hide entire questions based on previous answers
+- **Dynamic Options**: Hide specific options in multiple choice questions based on user input
+- **Adaptive Paths**: Create personalized form experiences for different user types
+
+### 📊 Screening & Analytics
+- **Response Screening**: Automatic Pass/Pending/Failed status based on completion criteria
+- **Progress Tracking**: Real-time progress indicators during form completion
+- **Question Analytics**: Detailed breakdown of responses per question with charts
+- **Response Filtering**: Sort and filter responses by status, date, and completion level
+
+### 🔗 Sharing & Distribution
+- **Shareable Links**: Generate unique URLs for easy form distribution
+- **QR Code Support**: Mobile-friendly access via QR codes
+- **Embed Codes**: iframe integration for websites and applications
+- **Social Sharing**: Built-in sharing options for social media platforms
+- **Email Templates**: Pre-formatted invitation emails
+
+### 📈 Data Management
+- **Real-time Dashboard**: Live response monitoring and analytics
+- **CSV Export**: Detailed data export with response metadata
+- **Analytics Export**: Summary statistics and completion rates
+- **Response Management**: Individual response viewing and analysis
 
 ## 🚀 Quick Start
 
-### HTML Version
-1. Open `formgenerator.html` in your browser
-2. Create your form using the visual builder
-3. Generate a shareable link
-4. Share the link to collect responses
+### HTML Version (Standalone)
+```bash
+# Clone the repository
+git clone <repository-url>
+cd form-generator
 
-### Streamlit Version
-1. Install requirements: `pip install -r requirements.txt`
-2. Run the app: `streamlit run streamlit_app.py`
-3. Access at `http://localhost:8501`
+# Open in browser
+python -m http.server 8000
+# Navigate to http://localhost:8000/formgenerator.html
+```
 
-## 📁 File Structure
+### Streamlit Version (Web App)
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Run the application
+streamlit run streamlit_app.py
+```
+
+## 📖 Usage Examples
+
+### Basic Form Creation
+1. **HTML Version**: Open `formgenerator.html` and use the visual form builder
+2. **Streamlit Version**: Run the app and select "🛠️ Form Builder"
+3. Add questions, configure logic, and publish
+4. Share the generated link or embed code
+
+### Advanced Logic Setup
+
+#### Skip Logic Example:
+```
+Question: "Years of experience?"
+Skip Rule: If < 2 years → Skip to Question 8
+```
+
+#### Option Hiding Example:
+```
+Question 1: "Programming languages?" (Checkboxes: JavaScript, Python, Java)
+Question 2: "Preferred framework?" (Dropdown: React, Vue, Django, Flask)
+Rule: Hide React/Vue if JavaScript not selected, Hide Django/Flask if Python not selected
+```
+
+#### Conditional Questions:
+```
+Question 1: "Are you a student?" (Yes/No)
+Question 2: "What grade are you in?" (Only shown if Question 1 = "Yes")
+```
+
+## 🗂️ Project Structure
 
 ```
-├── formgenerator.html          # Main form generator (HTML/JS)
-├── streamlit_app.py           # Streamlit version
+form-generator/
+├── formgenerator.html          # Main HTML form generator
+├── streamlit_app.py           # Streamlit web application
+├── wrapper-example.html       # Integration example
+├── integration-example.html   # Advanced integration demo
+├── workflow-explanation.html  # Workflow documentation
+├── wrapper-integration.css    # Styling for integrations
 ├── requirements.txt           # Python dependencies
-├── wrapper-example.html       # Example wrapper integration
-├── integration-example.html   # Integration guide
-├── workflow-explanation.html  # How-to guide
-├── test-debug.html           # Debug version
-├── wrapper-integration.css   # CSS for integration
-└── README.md                # This file
+├── DEMO_GUIDE.md             # Comprehensive demo scenarios
+├── GITHUB_SETUP.md           # Deployment instructions
+└── README.md                 # This file
 ```
-
-## 💡 How It Works
-
-1. **Create Forms**: Use the visual builder to create surveys
-2. **Generate Links**: Each form gets a unique shareable URL
-3. **Collect Responses**: People fill out clean, professional forms
-4. **Screen Participants**: Automatic screening based on completion
-5. **Export Data**: Download responses as CSV for analysis
-
-## 🔗 Integration
-
-### Direct Links
-```html
-<a href="formgenerator.html?form=YOUR_FORM_ID&mode=fill">Take Survey</a>
-```
-
-### Iframe Embedding
-```html
-<iframe src="formgenerator.html?form=YOUR_FORM_ID&mode=fill" width="100%" height="600"></iframe>
-```
-
-## 🛠️ Technical Details
-
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript
-- **Storage**: Browser localStorage (HTML version) / SQLite (Streamlit version)
-- **Backend**: Python/Streamlit (web app version)
-- **Responsive**: Mobile-first design
-- **No Dependencies**: HTML version works offline
-
-## 📊 Question Types
-
-- Short Text
-- Paragraph Text
-- Multiple Choice (Radio)
-- Checkboxes
-- Dropdown
-- Number Input
-- Email Input
-- Scale (1-10)
-- Grid Questions
-- Likert Scale
-- Multiple Grids
 
 ## 🎯 Use Cases
 
-- Customer satisfaction surveys
-- Market research
-- Product feedback
-- Employee surveys
-- Event registration
-- Lead generation
-- Academic research
-- User testing
+### 📝 Surveys & Research
+- Customer satisfaction surveys with adaptive questioning
+- Academic research with conditional logic
+- Market research with targeted follow-ups
 
-## 🔒 Privacy & Security
+### 💼 Business Applications
+- Job application screening with skill-based routing
+- Lead qualification forms with scoring
+- Employee feedback with department-specific questions
 
-- Data stored locally (HTML version)
-- No external dependencies
-- GDPR compliant design
-- Secure form submission
-- Response anonymization options
+### 🎓 Educational Assessment
+- Adaptive learning assessments
+- Student placement tests
+- Course feedback with personalized paths
+
+### 🏥 Healthcare & Screening
+- Patient intake forms with symptom-based routing
+- Health screening questionnaires
+- Mental health assessments with safety protocols
+
+## 🔧 Advanced Configuration
+
+### Form Settings
+```javascript
+{
+  "enable_screening": true,
+  "require_full_completion": false,
+  "custom_message": "Thank you for your participation!",
+  "allow_multiple_submissions": false
+}
+```
+
+### Skip Logic Configuration
+```javascript
+{
+  "skipLogic": [
+    {
+      "option": "Yes",
+      "target": 5  // Skip to question 5
+    },
+    {
+      "condition": {"operator": "greater", "value": 18},
+      "target": "end"  // End form
+    }
+  ]
+}
+```
+
+### Option Rules
+```javascript
+{
+  "optionRules": [
+    {
+      "sourceQuestion": 0,
+      "sourceValue": "JavaScript",
+      "hiddenOptions": ["Django", "Flask"]
+    }
+  ]
+}
+```
+
+## 📊 Analytics Features
+
+### Response Metrics
+- Total responses and completion rates
+- Pass/fail ratios for screening forms
+- Average completion time and dropout points
+- Question-specific response rates
+
+### Visual Analytics
+- Response distribution charts
+- Completion funnel analysis
+- Answer frequency graphs
+- Screening status breakdown
+
+### Export Options
+- **Detailed CSV**: All responses with metadata
+- **Analytics Summary**: Key metrics and statistics
+- **Filtered Data**: Responses matching specific criteria
+
+## 🔗 Integration Options
+
+### Website Embedding
+```html
+<iframe src="http://your-domain.com?form_id=FORM_ID&mode=fill" 
+        width="100%" height="600" frameborder="0">
+</iframe>
+```
+
+### API Integration
+Both versions provide programmatic access to form data for custom integrations.
+
+### Webhook Support
+Configure automatic notifications when forms are submitted (Streamlit version).
+
+## 🛠️ Technical Details
+
+### HTML Version
+- **Frontend**: Vanilla JavaScript, CSS3, HTML5
+- **Storage**: Browser localStorage
+- **Features**: Offline capable, no server required
+- **Deployment**: Static hosting (GitHub Pages, Netlify, etc.)
+
+### Streamlit Version
+- **Backend**: Python 3.7+, Streamlit, SQLite
+- **Features**: Database persistence, advanced analytics
+- **Deployment**: Streamlit Cloud, Heroku, Docker
+- **Requirements**: See `requirements.txt`
+
+## 🚀 Deployment
+
+### Quick Deploy (Streamlit Cloud)
+1. Push code to GitHub
+2. Connect repository to Streamlit Cloud
+3. Deploy with one click
+
+### Self-Hosted
+1. Install Python 3.7+
+2. Install dependencies: `pip install -r requirements.txt`
+3. Run: `streamlit run streamlit_app.py`
+
+### Static Hosting (HTML Version)
+1. Upload files to any web server
+2. Ensure HTTPS for localStorage access
+3. Configure CORS if needed
 
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Submit a pull request
+4. Test thoroughly
+5. Submit a pull request
 
 ## 📄 License
 
-MIT License - feel free to use for personal and commercial projects.
+This project is open source and available under the MIT License.
 
 ## 🆘 Support
 
-- Check the workflow-explanation.html for detailed usage guide
-- Review integration-example.html for embedding instructions
-- Open issues for bugs or feature requests
+- **Documentation**: See `DEMO_GUIDE.md` for detailed examples
+- **Setup Issues**: Check `GITHUB_SETUP.md` for deployment help
+- **Integration Help**: Review example files in the repository
 
 ## 🔮 Roadmap
 
-- [ ] Real-time collaboration
-- [ ] Advanced analytics
-- [ ] API integration
-- [ ] Multi-language support
-- [ ] Advanced screening algorithms
-- [ ] Email notifications
-- [ ] Custom themes
+- [ ] Real-time collaboration on form building
+- [ ] Advanced data visualization dashboard
+- [ ] Integration with popular form platforms
+- [ ] Mobile app for form management
+- [ ] AI-powered form optimization suggestions
 
 ---
 
-Made with ❤️ for better data collection and user screening.
+**Built with ❤️ for creating better forms and user experiences.**
