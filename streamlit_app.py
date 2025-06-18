@@ -201,17 +201,29 @@ def should_hide_option(question, option_value, all_answers, all_questions):
         source_value = rule.get('sourceValue')
         hidden_options = rule.get('hiddenOptions', [])
         
+        # Debug information
+        # st.write(f"DEBUG - Rule: source_q={source_question_idx}, source_val={source_value}, hidden={hidden_options}")
+        # st.write(f"DEBUG - Checking option: {option_value}, answers: {all_answers}")
+        
         if (source_question_idx is not None and 
             source_value and 
             option_value in hidden_options):
             
+            # Get the answer from the source question
             source_answer = all_answers.get(source_question_idx)
             
+            # Handle different answer types
             if isinstance(source_answer, list):
+                # For checkbox answers
                 if source_value in source_answer:
                     return True
-            else:
+            elif isinstance(source_answer, str):
+                # For text/dropdown/radio answers
                 if source_answer == source_value:
+                    return True
+            elif source_answer is not None:
+                # For numeric answers, convert to string for comparison
+                if str(source_answer) == str(source_value):
                     return True
     
     return False
@@ -640,9 +652,6 @@ def show_form_filler():
         if f'answers_{form_id}' not in st.session_state:
             st.session_state[f'answers_{form_id}'] = {}
         
-        if f'current_question_{form_id}' not in st.session_state:
-            st.session_state[f'current_question_{form_id}'] = 0
-        
         answers = st.session_state[f'answers_{form_id}']
         
         # Determine which questions to show based on skip logic
@@ -669,152 +678,274 @@ def show_form_filler():
         st.progress(progress)
         st.caption(f"Progress: {int(progress * 100)}% ({len([i for i in answers.keys() if answers[i]])}/{len(form_data['questions'])} questions answered)")
         
-        # Create form with dynamic questions
-        with st.form("response_form"):
-            form_changed = False
-            
+        # Show option hiding demo info
+        if any(q.get('optionRules') for _, q in visible_questions):
+            st.info("🔀 This form contains dynamic option filtering - some options will hide/show based on your previous answers!")
+        
+        # Create form with dynamic questions - use columns for better real-time updates
+        col1, col2 = st.columns([3, 1])
+        
+        with col1:
+            # Process each question individually for better reactivity
             for question_idx, question in visible_questions:
-                st.write(f"**Question {question_idx + 1}:** {question['text']}")
-                if question.get('description'):
-                    st.caption(question['description'])
-                
-                q_type = question['type']
-                key = f"q_{question_idx}"
-                current_answer = answers.get(question_idx, '')
-                
-                # Handle different question types with dynamic option filtering
-                if q_type == 'short-text':
-                    new_answer = st.text_input("", value=current_answer, key=key)
-                elif q_type == 'paragraph':
-                    new_answer = st.text_area("", value=current_answer, key=key)
-                elif q_type == 'multiple-choice':
-                    # Filter options based on option rules
-                    available_options = []
-                    for opt in question.get('options', []):
-                        if not should_hide_option(question, opt, answers, form_data['questions']):
-                            available_options.append(opt)
+                with st.container():
+                    st.write(f"**Question {question_idx + 1}:** {question['text']}")
+                    if question.get('description'):
+                        st.caption(question['description'])
                     
-                    if available_options:
-                        try:
-                            default_idx = available_options.index(current_answer) if current_answer in available_options else 0
-                        except:
-                            default_idx = 0
-                        new_answer = st.radio("", available_options, index=default_idx, key=key)
-                    else:
-                        st.info("No options available based on previous answers.")
-                        new_answer = ""
-                
-                elif q_type == 'checkboxes':
-                    available_options = []
-                    for opt in question.get('options', []):
-                        if not should_hide_option(question, opt, answers, form_data['questions']):
-                            available_options.append(opt)
+                    q_type = question['type']
+                    key = f"q_{question_idx}_live"
+                    current_answer = answers.get(question_idx, '')
                     
-                    if available_options:
-                        selected = []
-                        current_selected = current_answer if isinstance(current_answer, list) else []
-                        for opt in available_options:
-                            if st.checkbox(opt, value=opt in current_selected, key=f"{key}_{opt}"):
-                                selected.append(opt)
-                        new_answer = selected
-                    else:
-                        st.info("No options available based on previous answers.")
-                        new_answer = []
-                
-                elif q_type == 'dropdown':
-                    available_options = []
-                    for opt in question.get('options', []):
-                        if not should_hide_option(question, opt, answers, form_data['questions']):
-                            available_options.append(opt)
+                    # Handle different question types with dynamic option filtering
+                    if q_type == 'short-text':
+                        new_answer = st.text_input("Your answer:", value=current_answer, key=key)
+                        if new_answer != current_answer:
+                            answers[question_idx] = new_answer
+                            st.session_state[f'answers_{form_id}'] = answers
+                            st.rerun()
                     
-                    if available_options:
-                        options_with_empty = [""] + available_options
-                        try:
-                            default_idx = options_with_empty.index(current_answer) if current_answer in options_with_empty else 0
-                        except:
-                            default_idx = 0
-                        new_answer = st.selectbox("", options_with_empty, index=default_idx, key=key)
-                    else:
-                        st.info("No options available based on previous answers.")
-                        new_answer = ""
-                
-                elif q_type == 'number':
-                    new_answer = st.number_input("", value=float(current_answer) if current_answer else 0.0, key=key)
-                elif q_type == 'email':
-                    new_answer = st.text_input("", value=current_answer, key=key, placeholder="email@example.com")
-                elif q_type == 'scale':
-                    options = question.get('options', [str(i) for i in range(1, 11)])
-                    min_val, max_val = int(options[0]), int(options[-1])
-                    try:
-                        default_val = int(current_answer) if current_answer else min_val
-                    except:
-                        default_val = min_val
-                    new_answer = st.slider("", min_val, max_val, default_val, key=key)
-                elif q_type == 'likert-scale':
-                    available_options = []
-                    for opt in question.get('options', []):
-                        if not should_hide_option(question, opt, answers, form_data['questions']):
-                            available_options.append(opt)
+                    elif q_type == 'paragraph':
+                        new_answer = st.text_area("Your answer:", value=current_answer, key=key)
+                        if new_answer != current_answer:
+                            answers[question_idx] = new_answer
+                            st.session_state[f'answers_{form_id}'] = answers
+                            st.rerun()
                     
-                    if available_options:
-                        try:
-                            default_idx = available_options.index(current_answer) if current_answer in available_options else 0
-                        except:
-                            default_idx = 0
-                        new_answer = st.select_slider("", available_options, value=available_options[default_idx], key=key)
-                    else:
-                        new_answer = ""
-                
-                # Update answer in session state
-                if new_answer != current_answer:
-                    answers[question_idx] = new_answer
-                    form_changed = True
-                
-                st.write("---")
-            
-            # Submit button
-            col1, col2 = st.columns([1, 1])
-            with col1:
-                if st.form_submit_button("💾 Save Progress", use_container_width=True):
-                    st.session_state[f'answers_{form_id}'] = answers
-                    st.success("Progress saved!")
-            
-            with col2:
-                if st.form_submit_button("🚀 Submit Final Response", use_container_width=True):
-                    # Validate required fields for visible questions only
-                    valid = True
-                    for question_idx, question in visible_questions:
-                        if question['required'] and not answers.get(question_idx):
-                            st.error(f"Question {question_idx + 1} is required!")
-                            valid = False
-                    
-                    if valid:
-                        # Calculate screening status
-                        settings = form_data.get('settings', {})
-                        if settings.get('enable_screening', False):
-                            status = calculate_screening_status(answers, len(form_data['questions']))
-                            st.session_state[f'screening_status_{form_id}'] = status
+                    elif q_type == 'multiple-choice':
+                        # Filter options based on option rules
+                        all_options = question.get('options', [])
+                        available_options = []
+                        hidden_count = 0
                         
-                        save_response(form_id, answers)
-                        st.success(settings.get('custom_message', 'Thank you for your response!'))
-                        
-                        # Show screening status if enabled
-                        if settings.get('enable_screening', False):
-                            status = st.session_state.get(f'screening_status_{form_id}', 'Unknown')
-                            if status == "Passed":
-                                st.success(f"✅ Screening Status: {status}")
-                            elif status == "Pending":
-                                st.warning(f"⏳ Screening Status: {status}")
+                        for opt in all_options:
+                            if should_hide_option(question, opt, answers, form_data['questions']):
+                                hidden_count += 1
                             else:
-                                st.error(f"❌ Screening Status: {status}")
+                                available_options.append(opt)
                         
-                        st.balloons()
+                        if hidden_count > 0:
+                            st.caption(f"ℹ️ {hidden_count} option(s) hidden based on previous answers")
                         
-                        # Clear form data
-                        if f'answers_{form_id}' in st.session_state:
-                            del st.session_state[f'answers_{form_id}']
-                        if f'current_question_{form_id}' in st.session_state:
-                            del st.session_state[f'current_question_{form_id}']
+                        if available_options:
+                            if current_answer not in available_options:
+                                current_answer = ""  # Reset if current answer is now hidden
+                            
+                            new_answer = st.radio(
+                                "Select one:",
+                                options=[""] + available_options,
+                                index=([""] + available_options).index(current_answer) if current_answer in available_options else 0,
+                                key=key
+                            )
+                            
+                            if new_answer != current_answer:
+                                answers[question_idx] = new_answer
+                                st.session_state[f'answers_{form_id}'] = answers
+                                st.rerun()
+                        else:
+                            st.warning("No options available based on previous answers.")
+                            new_answer = ""
+                    
+                    elif q_type == 'checkboxes':
+                        all_options = question.get('options', [])
+                        available_options = []
+                        hidden_count = 0
+                        
+                        for opt in all_options:
+                            if should_hide_option(question, opt, answers, form_data['questions']):
+                                hidden_count += 1
+                            else:
+                                available_options.append(opt)
+                        
+                        if hidden_count > 0:
+                            st.caption(f"ℹ️ {hidden_count} option(s) hidden based on previous answers")
+                        
+                        if available_options:
+                            st.write("Select all that apply:")
+                            selected = []
+                            current_selected = current_answer if isinstance(current_answer, list) else []
+                            
+                            # Filter out hidden options from current selection
+                            current_selected = [opt for opt in current_selected if opt in available_options]
+                            
+                            for opt in available_options:
+                                if st.checkbox(opt, value=opt in current_selected, key=f"{key}_{opt}"):
+                                    selected.append(opt)
+                            
+                            if selected != current_selected:
+                                answers[question_idx] = selected
+                                st.session_state[f'answers_{form_id}'] = answers
+                                st.rerun()
+                        else:
+                            st.warning("No options available based on previous answers.")
+                    
+                    elif q_type == 'dropdown':
+                        all_options = question.get('options', [])
+                        available_options = []
+                        hidden_count = 0
+                        
+                        for opt in all_options:
+                            if should_hide_option(question, opt, answers, form_data['questions']):
+                                hidden_count += 1
+                            else:
+                                available_options.append(opt)
+                        
+                        if hidden_count > 0:
+                            st.caption(f"ℹ️ {hidden_count} option(s) hidden based on previous answers")
+                        
+                        if available_options:
+                            options_with_empty = ["Select an option..."] + available_options
+                            
+                            if current_answer not in available_options:
+                                current_answer = ""  # Reset if current answer is now hidden
+                            
+                            default_idx = options_with_empty.index(current_answer) if current_answer in available_options else 0
+                            
+                            new_answer = st.selectbox("Choose:", options_with_empty, index=default_idx, key=key)
+                            if new_answer == "Select an option...":
+                                new_answer = ""
+                            
+                            if new_answer != current_answer:
+                                answers[question_idx] = new_answer
+                                st.session_state[f'answers_{form_id}'] = answers
+                                st.rerun()
+                        else:
+                            st.warning("No options available based on previous answers.")
+                    
+                    elif q_type == 'number':
+                        new_answer = st.number_input("Enter number:", value=float(current_answer) if current_answer else 0.0, key=key)
+                        if new_answer != current_answer:
+                            answers[question_idx] = new_answer
+                            st.session_state[f'answers_{form_id}'] = answers
+                            st.rerun()
+                    
+                    elif q_type == 'email':
+                        new_answer = st.text_input("Enter email:", value=current_answer, key=key, placeholder="email@example.com")
+                        if new_answer != current_answer:
+                            answers[question_idx] = new_answer
+                            st.session_state[f'answers_{form_id}'] = answers
+                            st.rerun()
+                    
+                    elif q_type == 'scale':
+                        options = question.get('options', [str(i) for i in range(1, 11)])
+                        min_val, max_val = int(options[0]), int(options[-1])
+                        default_val = int(current_answer) if current_answer else min_val
+                        new_answer = st.slider("Rate:", min_val, max_val, default_val, key=key)
+                        if new_answer != current_answer:
+                            answers[question_idx] = new_answer
+                            st.session_state[f'answers_{form_id}'] = answers
+                            st.rerun()
+                    
+                    elif q_type == 'likert-scale':
+                        all_options = question.get('options', [])
+                        available_options = []
+                        hidden_count = 0
+                        
+                        for opt in all_options:
+                            if should_hide_option(question, opt, answers, form_data['questions']):
+                                hidden_count += 1
+                            else:
+                                available_options.append(opt)
+                        
+                        if hidden_count > 0:
+                            st.caption(f"ℹ️ {hidden_count} option(s) hidden based on previous answers")
+                        
+                        if available_options:
+                            if current_answer not in available_options:
+                                current_answer = available_options[0] if available_options else ""
+                            
+                            new_answer = st.select_slider("Rate:", available_options, value=current_answer, key=key)
+                            if new_answer != current_answer:
+                                answers[question_idx] = new_answer
+                                st.session_state[f'answers_{form_id}'] = answers
+                                st.rerun()
+                        else:
+                            st.warning("No options available based on previous answers.")
+                    
+                    # Show logic info if applicable
+                    logic_info = []
+                    if question.get('skipLogic'):
+                        logic_info.append(f"Skip logic: {len(question['skipLogic'])} rule(s)")
+                    if question.get('optionRules'):
+                        logic_info.append(f"Option rules: {len(question['optionRules'])} rule(s)")
+                    
+                    if logic_info:
+                        st.caption("🔀 " + " • ".join(logic_info))
+                    
+                    if question['required']:
+                        st.caption("⚠️ Required field")
+                    
+                    st.write("---")
+        
+        with col2:
+            st.subheader("📊 Progress")
+            
+            # Show current answers
+            if answers:
+                st.write("**Current Answers:**")
+                for q_idx, answer in answers.items():
+                    if answer:
+                        question_text = form_data['questions'][q_idx]['text'][:30] + "..."
+                        answer_display = answer
+                        if isinstance(answer, list):
+                            answer_display = ", ".join(answer)
+                        st.write(f"Q{q_idx + 1}: {answer_display}")
+            
+            # Show form stats
+            st.write("**Form Statistics:**")
+            st.write(f"Total Questions: {len(form_data['questions'])}")
+            st.write(f"Answered: {len([a for a in answers.values() if a])}")
+            st.write(f"Remaining: {len(form_data['questions']) - len([a for a in answers.values() if a])}")
+        
+        # Submit section
+        st.subheader("🚀 Submit Response")
+        
+        col1, col2, col3 = st.columns(3)
+        
+        with col1:
+            if st.button("💾 Save Progress", use_container_width=True):
+                st.session_state[f'answers_{form_id}'] = answers
+                st.success("Progress saved!")
+        
+        with col2:
+            if st.button("🔄 Reset Form", use_container_width=True):
+                st.session_state[f'answers_{form_id}'] = {}
+                st.rerun()
+        
+        with col3:
+            if st.button("🚀 Submit Final Response", use_container_width=True):
+                # Validate required fields for visible questions only
+                valid = True
+                for question_idx, question in visible_questions:
+                    if question['required'] and not answers.get(question_idx):
+                        st.error(f"Question {question_idx + 1} is required!")
+                        valid = False
+                
+                if valid:
+                    # Calculate screening status
+                    settings = form_data.get('settings', {})
+                    if settings.get('enable_screening', False):
+                        status = calculate_screening_status(answers, len(form_data['questions']))
+                        st.session_state[f'screening_status_{form_id}'] = status
+                    
+                    save_response(form_id, answers)
+                    st.success(settings.get('custom_message', 'Thank you for your response!'))
+                    
+                    # Show screening status if enabled
+                    if settings.get('enable_screening', False):
+                        status = st.session_state.get(f'screening_status_{form_id}', 'Unknown')
+                        if status == "Passed":
+                            st.success(f"✅ Screening Status: {status}")
+                        elif status == "Pending":
+                            st.warning(f"⏳ Screening Status: {status}")
+                        else:
+                            st.error(f"❌ Screening Status: {status}")
+                    
+                    st.balloons()
+                    
+                    # Clear form data
+                    if f'answers_{form_id}' in st.session_state:
+                        del st.session_state[f'answers_{form_id}']
 
 def show_responses_viewer():
     st.header("📊 Response Viewer & Analytics")
@@ -1070,5 +1201,64 @@ def show_responses_viewer():
         else:
             st.info("No responses received yet. Share your form to start collecting responses!")
 
+# Demo option hiding button
+        if st.button("🎯 Create Demo Form with Option Hiding", use_container_width=True):
+            # Create a demo form that demonstrates option hiding
+            demo_form = {
+                'id': generate_unique_id(),
+                'title': 'Demo: Option Hiding Example',
+                'questions': [
+                    {
+                        'text': 'What programming languages do you know?',
+                        'description': 'This will affect which frameworks appear in the next question',
+                        'type': 'checkboxes',
+                        'required': True,
+                        'options': ['JavaScript', 'Python', 'Java', 'C++']
+                    },
+                    {
+                        'text': 'Which frameworks would you like to learn?',
+                        'description': 'Options will appear based on your programming language selection',
+                        'type': 'multiple-choice',
+                        'required': True,
+                        'options': ['React', 'Vue.js', 'Angular', 'Django', 'Flask', 'Spring Boot', 'Node.js'],
+                        'optionRules': [
+                            {
+                                'sourceQuestion': 0,
+                                'sourceValue': 'JavaScript',
+                                'hiddenOptions': ['Django', 'Flask', 'Spring Boot']
+                            },
+                            {
+                                'sourceQuestion': 0,
+                                'sourceValue': 'Python',
+                                'hiddenOptions': ['React', 'Vue.js', 'Angular', 'Spring Boot', 'Node.js']
+                            },
+                            {
+                                'sourceQuestion': 0,
+                                'sourceValue': 'Java',
+                                'hiddenOptions': ['React', 'Vue.js', 'Angular', 'Django', 'Flask', 'Node.js']
+                            }
+                        ]
+                    },
+                    {
+                        'text': 'How would you rate your experience?',
+                        'type': 'scale',
+                        'required': False,
+                        'options': ['1', '2', '3', '4', '5']
+                    }
+                ],
+                'is_published': True,
+                'settings': {
+                    'custom_message': 'Thank you for testing the option hiding feature!',
+                    'enable_screening': True
+                }
+            }
+            
+            # Save the demo form
+            save_form(demo_form)
+            st.session_state.current_form = demo_form
+            st.success("Demo form created! You can now test it in 'Fill Form' mode.")
+            st.info("📝 **How to test:**\n1. Go to 'Fill Form' mode\n2. Select different programming languages in question 1\n3. Watch how the framework options in question 2 change!")
+            st.rerun()
+    
 if __name__ == "__main__":
     main()
