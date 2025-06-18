@@ -1,0 +1,2824 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Research Trends Form Generator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e0e7ff 0%, #a5b4fc 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+        }
+
+        .header {
+            padding: 50px 30px;
+            background: linear-gradient(135deg, #6d28d9 0%, #3b0764 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+            border-bottom: 8px solid #5b21b6;
+        }
+
+        .header:before {
+            content: '';
+            position: absolute;
+            top: -60%;
+            left: -60%;
+            width: 220%;
+            height: 220%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 80%);
+            z-index: 0;
+        }
+
+        .header h1 {
+            font-size: 40px;
+            margin-bottom: 12px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 20px;
+            opacity: 0.85;
+            max-width: 85%;
+            margin: 0 auto;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content {
+            padding: 30px;
+            background: #f8fafc;
+        }
+
+        .form-progress {
+            margin-bottom: 25px;
+            height: 12px;
+            background-color: #e5e5e5;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #6d28d9 0%, #3b0764 100%);
+            transition: width 0.5s ease-in-out;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-container {
+            display: none;
+            padding: 25px;
+            background: #ffffff;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .question-container.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .question-number {
+            font-size: 16px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .question {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #1f2937;
+            line-height: 1.3;
+        }
+
+        .required:after {
+            content: '*';
+            color: #dc2626;
+            margin-left: 5px;
+            font-size: 18px;
+        }
+
+        .description {
+            font-size: 15px;
+            color: #4b5563;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="range"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            font-size: 15px;
+            margin-top: 10px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background-color: #f9fafb;
+        }
+
+        input[type="range"] {
+            padding: 0;
+            margin: 15px 0;
+            accent-color: #6d28d9;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus,
+        input[type="range"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: #6d28d9;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(109, 40, 217, 0.1);
+        }
+
+        .radio-group,
+        .checkbox-group,
+        .likert-group {
+            margin-top: 12px;
+        }
+
+        .radio-option,
+        .checkbox-option,
+        .likert-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .radio-option:hover,
+        .checkbox-option:hover,
+        .likert-option:hover {
+            background-color: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        .radio-option input,
+        .checkbox-option input,
+        .likert-option input {
+            margin-right: 12px;
+            transform: scale(1.3);
+            accent-color: #6d28d9;
+        }
+
+        label {
+            font-size: 15px;
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .prev-btn {
+            background-color: #e5e7eb;
+            color: #1f2937;
+        }
+
+        .prev-btn:hover {
+            background-color: #d1d5db;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .next-btn,
+        .submit-btn {
+            background: linear-gradient(135deg, #6d28d9 0%, #3b0764 100%);
+            color: white;
+        }
+
+        .next-btn:hover,
+        .submit-btn:hover {
+            background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(109, 40, 217, 0.3);
+        }
+
+        .submit-btn {
+            display: none;
+        }
+
+        .form-builder {
+            padding: 30px;
+            border-top: 1px solid #e5e7eb;
+            background-color: #f9fafc;
+        }
+
+        .form-builder h2 {
+            margin-bottom: 20px;
+            color: #1f2937;
+            font-size: 26px;
+            font-weight: 600;
+        }
+
+        .builder-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .builder-btn {
+            padding: 12px 16px;
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: #1f2937;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .builder-btn:hover {
+            background-color: #f3f4f6;
+            border-color: #6d28d9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #preview-form {
+            background: linear-gradient(135deg, #6d28d9 0%, #3b0764 100%);
+            color: white;
+            border: none;
+        }
+
+        #preview-form:hover {
+            background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);
+        }
+
+        .add-question-form {
+            display: none;
+            background-color: #ffffff;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+        }
+
+        .add-question-form.active {
+            display: block;
+        }
+
+        .add-question-form h3 {
+            margin-bottom: 18px;
+            font-size: 22px;
+            color: #1f2937;
+            font-weight: 600;
+        }
+
+        .form-row {
+            margin-bottom: 18px;
+        }
+
+        .options-container,
+        .rows-container,
+        .columns-container,
+        .grids-container {
+            margin-top: 12px;
+        }
+
+        .option-row,
+        .row-row,
+        .column-row,
+        .grid-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .option-row input,
+        .row-row input,
+        .column-row input,
+        .grid-row input {
+            flex: 1;
+            border-radius: 8px;
+        }
+
+        .remove-option {
+            background-color: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            margin-left: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #4b5563;
+            transition: all 0.2s ease;
+        }
+
+        .remove-option:hover {
+            background-color: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+
+        .add-option {
+            background-color: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 12px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            font-weight: 500;
+            color: #1f2937;
+            transition: all 0.2s ease;
+        }
+
+        .add-option:hover {
+            background-color: #e5e7eb;
+            border-color: #6d28d9;
+        }
+
+        .add-option:before {
+            content: '+';
+            margin-right: 6px;
+            font-size: 16px;
+        }
+
+        .preview-mode .form-builder {
+            display: none;
+        }
+
+        .success-message {
+            padding: 50px 30px;
+            text-align: center;
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .success-message h2 {
+            color: #16a34a;
+            margin-bottom: 15px;
+            font-size: 30px;
+            font-weight: 600;
+        }
+
+        .success-message p {
+            font-size: 16px;
+            color: #4b5563;
+            margin-bottom: 25px;
+        }
+
+        .new-form-section {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e5e7eb;
+        }
+
+        .new-form-section h3 {
+            margin-bottom: 12px;
+            color: #1f2937;
+            font-size: 20px;
+        }
+
+        .current-form-info {
+            background: #f0f9ff;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #6d28d9;
+        }
+
+        .current-form-info p {
+            font-size: 14px;
+            color: #1f2937;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .loading-content {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 280px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #6d28d9;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        .grid-container {
+            display: grid;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .grid-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .grid-cell {
+            flex: 1;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .grid-cell input {
+            margin: 0 auto;
+        }
+
+        .grid-cell label {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .slide-in {
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            border-left: 5px solid;
+            font-size: 14px;
+            transition: opacity 0.3s ease;
+        }
+
+        .alert-success {
+            background-color: #dcfce7;
+            border-color: #16a34a;
+            color: #166534;
+        }
+
+        .alert-error {
+            background-color: #fee2e2;
+            border-color: #dc2626;
+            color: #991b1b;
+        }
+
+        .alert-info {
+            background-color: #e0f2fe;
+            border-color: #0284c7;
+            color: #0e7490;
+        }
+
+        .explainer {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 8px;
+            line-height: 1.5;
+        }
+
+        .skip-logic-container,
+        .option-logic-container {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .skip-logic-row,
+        .option-logic-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 8px;
+        }
+
+        .skip-logic-row select,
+        .skip-logic-row input,
+        .option-logic-row select,
+        .option-logic-row input {
+            flex: 1;
+            border-radius: 8px;
+        }
+
+        .hidden-options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .hidden-options-container label {
+            font-size: 13px;
+            color: #4b5563;
+        }
+
+        .question-list {
+            margin-top: 15px;
+        }
+
+        .question-list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            transition: background-color 0.2s ease;
+        }
+
+        .question-list-item:hover {
+            background-color: #f9fafb;
+        }
+
+        .question-list-item button {
+            padding: 8px 14px;
+            font-size: 13px;
+        }
+
+        .preview-back-btn {
+            background: #e5e7eb;
+            color: #1f2937;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .preview-back-btn:hover {
+            background: #d1d5db;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .back-to-builder-btn {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #6d28d9 0%, #3b0764 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: none;
+        }
+
+        .back-to-builder-btn:hover {
+            background: linear-gradient(135deg, #7c3aed 0%, #4c1d95 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .preview-mode .back-to-builder-btn {
+            display: block;
+        }        .share-section,
+        .responses-section {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+        }
+
+        .share-section h3,
+        .responses-section h3 {
+            margin-bottom: 20px;
+            color: #1f2937;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .link-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .link-container input {
+            flex: 1;
+            font-family: monospace;
+            background: #f9fafb;
+        }
+
+        .qr-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 10px;
+        }
+
+        .responses-summary {
+            background: #f0f9ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 5px solid #6d28d9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .responses-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .response-item {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .response-item:hover {
+            background: #f3f4f6;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .response-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .response-timestamp {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: normal;
+        }
+
+        .response-answers {
+            display: grid;
+            gap: 8px;
+        }
+
+        .response-answer {
+            display: flex;
+            padding: 8px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .response-answer:last-child {
+            border-bottom: none;
+        }
+
+        .answer-question {
+            font-weight: 500;
+            color: #374151;
+            min-width: 200px;
+            margin-right: 15px;
+        }
+
+        .answer-value {
+            color: #1f2937;
+            flex: 1;
+        }
+
+        .embed-preview {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .embed-preview h4 {
+            margin-bottom: 10px;
+            color: #1f2937;
+            font-size: 16px;
+        }
+
+        .screening-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .screening-status.passed {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .screening-status.failed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .screening-status.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .standalone-form {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e0e7ff 0%, #a5b4fc 100%);
+        }
+
+        .standalone-form .form-builder {
+            display: none;
+        }
+
+        .standalone-form .back-to-builder-btn {
+            display: none;
+        }
+
+        .form-expired {
+            text-align: center;
+            padding: 50px 30px;
+            color: #dc2626;
+        }
+
+        .form-expired h2 {
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+
+        @media (max-width: 768px) {
+            .link-container {
+                flex-direction: column;
+            }
+
+            .link-container input {
+                margin-bottom: 10px;
+            }
+
+            .responses-summary {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .answer-question {
+                min-width: 150px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <h3 id="loading-title">Processing...</h3>
+            <p id="loading-message">Please wait while we process your request.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <button class="back-to-builder-btn">Back to Builder</button>
+        <div class="header">
+            <h1 id="page-title">Global Research Trends Form Generator</h1>
+            <p id="page-subtitle">Please complete this research survey one question at a time</p>
+        </div>
+
+        <div class="content">
+            <div class="form-progress">
+                <div class="progress-bar" style="width: 0%"></div>
+            </div>
+
+            <form id="survey-form">
+                <!-- Questions will be dynamically added here -->
+            </form>
+
+            <div class="success-message">
+                <h2>Thank You!</h2>
+                <p>Your response has been recorded successfully.</p>
+                <button id="create-another" class="next-btn" style="margin-top: 20px;">Submit Another Response</button>
+            </div>
+        </div>
+
+        <div class="form-builder">            <div class="new-form-section">
+                <h3>Current Form</h3>
+                <div class="current-form-info" id="current-form-info">
+                    <p><strong>Form Title:</strong> <span id="current-form-title">Untitled Form</span></p>
+                    <p><strong>Questions:</strong> <span id="current-form-count">0</span></p>
+                    <p><strong>Form ID:</strong> <span id="current-form-id">Not generated</span></p>
+                </div>
+                <div class="form-row">
+                    <label for="form-title">Form Title:</label>
+                    <input type="text" id="form-title" placeholder="Enter form title"
+                        value="Global Research Trends Form">
+                </div>
+                <button id="new-form" class="builder-btn">Start New Form</button>
+                <button id="edit-form" class="builder-btn">Edit Form</button>
+                <button id="generate-link" class="builder-btn">Generate Shareable Link</button>
+                <button id="view-responses" class="builder-btn">View Responses</button>
+            </div>
+
+            <div class="share-section" id="share-section" style="display: none;">
+                <h3>Share Your Form</h3>
+                <div class="share-info">
+                    <div class="form-row">
+                        <label>Shareable Link:</label>
+                        <div class="link-container">
+                            <input type="text" id="shareable-link" readonly>
+                            <button id="copy-link" class="builder-btn">Copy Link</button>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <label>Embed Code (for your wrapper):</label>
+                        <textarea id="embed-code" readonly rows="4"></textarea>
+                        <button id="copy-embed" class="builder-btn">Copy Embed Code</button>
+                    </div>
+                    <div class="form-row">
+                        <label>QR Code:</label>
+                        <div id="qr-code" class="qr-container"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="responses-section" id="responses-section" style="display: none;">
+                <h3>Form Responses</h3>
+                <div class="responses-summary">
+                    <p><strong>Total Responses:</strong> <span id="total-responses">0</span></p>
+                    <button id="export-responses" class="builder-btn">Export as CSV</button>
+                    <button id="clear-responses" class="builder-btn" style="background: #dc2626;">Clear All Responses</button>
+                </div>
+                <div id="responses-list" class="responses-list">
+                    <!-- Responses will be displayed here -->
+                </div>
+            </div>
+
+            <h2>Form Builder</h2>
+            <div class="builder-controls">
+                <button class="builder-btn" id="add-short-text">Add Short Text</button>
+                <button class="builder-btn" id="add-paragraph">Add Paragraph</button>
+                <button class="builder-btn" id="add-multiple-choice">Add Multiple Choice</button>
+                <button class="builder-btn" id="add-checkbox">Add Checkboxes</button>
+                <button class="builder-btn" id="add-dropdown">Add Dropdown</button>
+                <button class="builder-btn" id="add-number">Add Number</button>
+                <button class="builder-btn" id="add-email">Add Email</button>
+                <button class="builder-btn" id="add-scale">Add Scale</button>
+                <button class="builder-btn" id="add-grid">Add Grid</button>
+                <button class="builder-btn" id="add-likert">Add Likert Scale</button>
+                <button class="builder-btn" id="add-multiple-grids">Add Multiple Grids</button>
+                <button class="builder-btn" id="preview-form">Preview Form</button>
+            </div>
+
+            <div class="add-question-form">
+                <!-- Form for adding/editing questions will be dynamically populated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>        let currentForm = {
+            id: generateUniqueId(),
+            title: 'Global Research Trends Form',
+            questions: [],
+            createdAt: new Date(),
+            lastModified: new Date(),
+            isPublished: false,
+            shareableLink: null,
+            responses: [],
+            settings: {
+                allowMultipleResponses: true,
+                requireAuth: false,
+                showProgressBar: true,
+                customMessage: 'Thank you for participating in our research!'
+            }
+        };        let currentQuestionIndex = 0;
+        let isPreviewMode = false;
+        let editingQuestionIndex = null;
+        let storedResponses = {};
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Check if this is a standalone form view
+            const urlParams = new URLSearchParams(window.location.search);
+            const formId = urlParams.get('form');
+            const mode = urlParams.get('mode');
+            
+            if (formId && mode === 'fill') {
+                loadStandaloneForm(formId);
+            } else {
+                initializeApp();
+            }
+        });
+
+        function initializeApp() {
+            setupEventListeners();
+            updateCurrentFormInfo();
+            currentForm.title = document.getElementById('form-title').value;
+        }
+
+        function setupEventListeners() {
+            const formBuilderButtons = document.querySelectorAll('.builder-btn:not(#preview-form):not(#new-form):not(#edit-form)');
+            formBuilderButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const questionType = this.id.replace('add-', '');
+                    showAddQuestionForm(questionType);
+                });
+            });            document.getElementById('form-title').addEventListener('input', function () {
+                currentForm.title = this.value || 'Untitled Form';
+                updateCurrentFormInfo();
+            });
+
+            document.getElementById('new-form').addEventListener('click', startNewForm);
+            document.getElementById('edit-form').addEventListener('click', showEditForm);
+            document.getElementById('preview-form').addEventListener('click', togglePreviewMode);
+            document.getElementById('generate-link').addEventListener('click', generateShareableLink);
+            document.getElementById('view-responses').addEventListener('click', showResponsesView);
+            document.getElementById('copy-link').addEventListener('click', copyShareableLink);
+            document.getElementById('copy-embed').addEventListener('click', copyEmbedCode);
+            document.getElementById('export-responses').addEventListener('click', exportResponses);
+            document.getElementById('clear-responses').addEventListener('click', clearAllResponses);
+            document.querySelector('.back-to-builder-btn').addEventListener('click', togglePreviewMode);
+            document.getElementById('create-another').addEventListener('click', createAnotherResponse);
+        }        function generateUniqueId() {
+            return 'form_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        function startNewForm() {
+            if (currentForm.questions.length > 0) {
+                if (!confirm('You have unsaved changes. Are you sure you want to start a new form?')) {
+                    return;
+                }
+            }
+
+            currentForm = {
+                id: generateUniqueId(),
+                title: 'Untitled Form',
+                questions: [],
+                createdAt: new Date(),
+                lastModified: new Date(),
+                isPublished: false,
+                shareableLink: null,
+                responses: [],
+                settings: {
+                    allowMultipleResponses: true,
+                    requireAuth: false,
+                    showProgressBar: true,
+                    customMessage: 'Thank you for participating in our research!'
+                }
+            };
+
+            document.getElementById('form-title').value = 'Untitled Form';
+            updateCurrentFormInfo();
+
+            if (isPreviewMode) {
+                togglePreviewMode();
+            }
+
+            document.querySelector('.add-question-form').classList.remove('active');
+            document.getElementById('share-section').style.display = 'none';
+            document.getElementById('responses-section').style.display = 'none';
+            clearForm();
+        }
+
+        function showEditForm() {
+            const addQuestionForm = document.querySelector('.add-question-form');
+            addQuestionForm.innerHTML = '';
+            addQuestionForm.classList.add('active');
+
+            const formHTML = `
+        <h3>Edit Form Questions</h3>
+        <div class="question-list">
+            ${currentForm.questions.length === 0 ?
+                    '<p>No questions added yet.</p>' :
+                    currentForm.questions.map((question, index) => `
+                    <div class="question-list-item">
+                        <span>Question ${index + 1}: ${question.text}</span>
+                        <button type="button" class="builder-btn" onclick="editQuestion(${index})">Edit</button>
+                    </div>
+                `).join('')
+                }
+        </div>
+        <div class="buttons">
+            <button type="button" class="prev-btn" id="cancel-edit">Close</button>
+        </div>
+    `;
+
+            addQuestionForm.innerHTML = formHTML;
+            addQuestionForm.querySelector('#cancel-edit').addEventListener('click', function () {
+                addQuestionForm.classList.remove('active');
+            });
+        }
+
+        function editQuestion(index) {
+            editingQuestionIndex = index;
+            const question = currentForm.questions[index];
+            showAddQuestionForm(question.type, question);
+        }
+
+        function togglePreviewMode() {
+            if (currentForm.questions.length === 0) {
+                showAlert('Please add at least one question to preview the form.', 'error');
+                return;
+            }
+
+            isPreviewMode = !isPreviewMode;
+            const container = document.querySelector('.container');
+            const previewBtn = document.getElementById('preview-form');
+
+            if (isPreviewMode) {
+                container.classList.add('preview-mode');
+                previewBtn.textContent = 'Back to Builder';
+                clearForm();
+
+                // Add Back to Builder button in preview mode
+                const surveyForm = document.getElementById('survey-form');
+                const backButton = document.createElement('button');
+                backButton.className = 'preview-back-btn';
+                backButton.textContent = 'Back to Builder';
+                backButton.onclick = togglePreviewMode;
+                surveyForm.prepend(backButton);
+
+                showQuestion(0);
+            } else {
+                container.classList.remove('preview-mode');
+                previewBtn.textContent = 'Preview Form';
+                clearForm();
+            }
+        }
+
+        function createAnotherResponse() {
+            document.querySelector('.success-message').style.display = 'none';
+            resetForm();
+            showQuestion(0);
+        }        function updateOptionVisibility(index) {
+            console.log(`updateOptionVisibility called for question ${index}`);
+            const question = currentForm.questions[index];
+            if (!question.optionRules || question.optionRules.length === 0) {
+                console.log(`No option rules for question ${index}`);
+                // Reset visibility for all options if no rules apply
+                const currentQuestionContainer = document.getElementById(`question-${index}`);
+                if (currentQuestionContainer) {
+                    const radioOptions = currentQuestionContainer.querySelectorAll('.radio-option, .checkbox-option');
+                    const selectOptions = currentQuestionContainer.querySelectorAll(`select#q${index} option:not([value=""])`);
+                    
+                    radioOptions.forEach(opt => {
+                        opt.style.display = '';
+                    });
+                    selectOptions.forEach(opt => {
+                        opt.style.display = '';
+                    });
+                }
+                return;
+            }
+
+            console.log(`Processing ${question.optionRules.length} option rules for question ${index}`);
+            const currentQuestionContainer = document.getElementById(`question-${index}`);
+            if (!currentQuestionContainer) {
+                console.log(`Question container not found for question ${index}`);
+                return;
+            }
+
+            // Reset all options to visible before applying hiding rules
+            const radioOptions = currentQuestionContainer.querySelectorAll('.radio-option, .checkbox-option');
+            const selectOptions = currentQuestionContainer.querySelectorAll(`select#q${index} option:not([value=""])`);
+            
+            radioOptions.forEach(opt => {
+                opt.style.display = '';
+            });
+            selectOptions.forEach(opt => {
+                opt.style.display = '';
+            });
+
+            question.optionRules.forEach((rule, ruleIndex) => {
+                console.log(`Processing rule ${ruleIndex}:`, rule);
+                // Validate rule structure
+                if (typeof rule.sourceQuestion !== 'number' || !rule.sourceValue || !Array.isArray(rule.hiddenOptions)) {
+                    console.log(`Invalid rule structure:`, rule);
+                    return;
+                }
+
+                const sourceQuestion = currentForm.questions[rule.sourceQuestion];
+                if (!sourceQuestion) {
+                    console.log(`Source question ${rule.sourceQuestion} not found`);
+                    return;
+                }
+
+                let sourceResponse = null;                // Get the source response based on question type
+                if (sourceQuestion.type === 'multiple-choice' || sourceQuestion.type === 'dropdown' || sourceQuestion.type === 'likert') {
+                    const selected = document.querySelector(`input[name="q${rule.sourceQuestion}"]:checked, select#q${rule.sourceQuestion}`);
+                    sourceResponse = selected ? selected.value : (storedResponses[rule.sourceQuestion] || null);
+                    console.log(`Source response for question ${rule.sourceQuestion}:`, sourceResponse);
+                } else if (sourceQuestion.type === 'checkbox') {
+                    const selectedCheckboxes = document.querySelectorAll(`input[name="q${rule.sourceQuestion}"]:checked`);
+                    if (selectedCheckboxes.length > 0) {
+                        sourceResponse = Array.from(selectedCheckboxes).map(cb => cb.value);
+                    } else {
+                        sourceResponse = storedResponses[rule.sourceQuestion] || [];
+                    }
+                    console.log(`Source response (checkbox) for question ${rule.sourceQuestion}:`, sourceResponse);
+                }
+
+                // Apply hiding logic
+                if (sourceResponse) {
+                    console.log(`Applying hiding logic. Source response: ${sourceResponse}, rule source value: ${rule.sourceValue}, hidden options:`, rule.hiddenOptions);
+                    
+                    // Hide radio/checkbox options
+                    radioOptions.forEach(optionDiv => {
+                        const input = optionDiv.querySelector('input');
+                        if (input) {
+                            if (Array.isArray(sourceResponse)) {
+                                // For checkboxes, hide if any selected value matches the rule
+                                if (sourceResponse.includes(rule.sourceValue) && rule.hiddenOptions.includes(input.value)) {
+                                    console.log(`Hiding option: ${input.value}`);
+                                    optionDiv.style.display = 'none';
+                                    // Uncheck if hidden
+                                    if (input.checked) {
+                                        input.checked = false;
+                                    }
+                                }
+                            } else {
+                                // For single-value responses, hide if the value matches
+                                if (sourceResponse === rule.sourceValue && rule.hiddenOptions.includes(input.value)) {
+                                    console.log(`Hiding option: ${input.value}`);
+                                    optionDiv.style.display = 'none';
+                                    // Uncheck if hidden
+                                    if (input.checked) {
+                                        input.checked = false;
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    
+                    // Hide select options
+                    selectOptions.forEach(option => {
+                        if (Array.isArray(sourceResponse)) {
+                            // For checkboxes, hide if any selected value matches the rule
+                            if (sourceResponse.includes(rule.sourceValue) && rule.hiddenOptions.includes(option.value)) {
+                                console.log(`Hiding select option: ${option.value}`);
+                                option.style.display = 'none';
+                                // Reset select if current value is hidden
+                                const select = option.parentElement;
+                                if (select.value === option.value) {
+                                    select.value = '';
+                                }
+                            }
+                        } else {
+                            // For single-value responses, hide if the value matches
+                            if (sourceResponse === rule.sourceValue && rule.hiddenOptions.includes(option.value)) {
+                                console.log(`Hiding select option: ${option.value}`);
+                                option.style.display = 'none';
+                                // Reset select if current value is hidden
+                                const select = option.parentElement;
+                                if (select.value === option.value) {
+                                    select.value = '';
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    console.log(`No source response found for question ${rule.sourceQuestion}`);
+                }
+            });
+        }
+        function generateOptionLogicInputs(form, type, rule = {}, existingQuestion = null) {
+            const questionOptions = currentForm.questions.map((q, index) =>
+                `<option value="${index}" ${rule.sourceQuestion === index ? 'selected' : ''}>${index + 1}. ${q.text}</option>`
+            ).join('');
+
+            const sourceQuestionIndex = rule.sourceQuestion || form.querySelector('.option-logic-source')?.value || '';
+            const sourceQuestion = sourceQuestionIndex !== '' ? currentForm.questions[sourceQuestionIndex] : null;
+            let sourceOptions = '';
+            if (sourceQuestion && ['multiple-choice', 'checkbox', 'dropdown', 'likert'].includes(sourceQuestion.type)) {
+                sourceOptions = sourceQuestion.options.map(opt =>
+                    `<option value="${opt}" ${rule.sourceValue === opt ? 'selected' : ''}>${opt}</option>`
+                ).join('');
+            }
+
+            const hiddenOptions = existingQuestion && existingQuestion.options ? existingQuestion.options.map(opt =>
+                `<label><input type="checkbox" class="hidden-option" value="${opt}" ${rule.hiddenOptions && rule.hiddenOptions.includes(opt) ? 'checked' : ''}> ${opt}</label>`
+            ).join('') : '';
+
+            return `
+        <select class="option-logic-source" onchange="updateOptionLogicOptions(this.closest('.add-question-form'))">
+            <option value="" disabled ${!rule.sourceQuestion && rule.sourceQuestion !== 0 ? 'selected' : ''}>Select source question</option>
+            ${questionOptions}
+        </select>
+        <select class="option-logic-value">
+            <option value="" disabled ${!rule.sourceValue ? 'selected' : ''}>Select value</option>
+            ${sourceOptions}
+        </select>
+        <div class="hidden-options-container">
+            <label>Hide these options:</label>
+            ${hiddenOptions}
+        </div>
+    `;
+        }        function updateOptionLogicOptions(form) {
+            const optionLogicRows = form.querySelectorAll('.option-logic-row');
+            optionLogicRows.forEach(row => {
+                const sourceSelect = row.querySelector('.option-logic-source');
+                const sourceIndex = sourceSelect.value;
+                const valueSelect = row.querySelector('.option-logic-value');
+                const hiddenOptionsContainer = row.querySelector('.hidden-options-container');
+                const currentValue = valueSelect.value;
+
+                if (sourceIndex !== '') {
+                    const sourceQuestion = currentForm.questions[sourceIndex];
+                    if (['multiple-choice', 'checkbox', 'dropdown', 'likert'].includes(sourceQuestion.type)) {
+                        valueSelect.innerHTML = `
+                    <option value="" disabled ${!currentValue ? 'selected' : ''}>Select value</option>
+                    ${sourceQuestion.options.map(opt =>
+                            `<option value="${opt}" ${currentValue === opt ? 'selected' : ''}>${opt}</option>`
+                        ).join('')}
+                `;
+                    }
+                } else {
+                    valueSelect.innerHTML = `<option value="" disabled selected>Select value</option>`;
+                }
+
+                // Update hidden options based on current question's options
+                const currentQuestionOptions = form.querySelectorAll('.option-input');
+                if (currentQuestionOptions.length > 0) {
+                    const options = Array.from(currentQuestionOptions).map(input => input.value).filter(val => val);
+                    const currentHidden = Array.from(row.querySelectorAll('.hidden-option:checked')).map(cb => cb.value);
+                    hiddenOptionsContainer.innerHTML = `
+                <label>Hide these options:</label>
+                ${options.map(opt =>
+                        `<label><input type="checkbox" class="hidden-option" value="${opt}" ${currentHidden.includes(opt) ? 'checked' : ''}> ${opt}</label>`
+                    ).join('')}
+            `;
+                } else {
+                    // If no options are available yet, show a message
+                    hiddenOptionsContainer.innerHTML = `
+                <label>Hide these options:</label>
+                <p style="font-size: 12px; color: #6b7280; margin-top: 4px;">Add options above to see them here</p>
+            `;
+                }
+            });
+        }
+
+        function showAddQuestionForm(type, existingQuestion = null) {
+            const addQuestionForm = document.querySelector('.add-question-form');
+            addQuestionForm.innerHTML = '';
+            addQuestionForm.classList.add('active');
+
+            const questionOptions = currentForm.questions.map((q, index) =>
+                `<option value="${index}">${index + 1}. ${q.text}</option>`
+            ).join('');
+
+            let formHTML = `
+        <h3>${existingQuestion ? 'Edit' : 'Add'} ${formatQuestionType(type)} Question</h3>
+        <div class="form-row">
+            <label for="question-text">Question</label>
+            <input type="text" id="question-text" value="${existingQuestion ? existingQuestion.text : ''}" required>
+        </div>
+        <div class="form-row">
+            <label for="question-description">Description (optional)</label>
+            <input type="text" id="question-description" value="${existingQuestion ? existingQuestion.description || '' : ''}">
+        </div>
+    `;
+
+            if (type === 'multiple-choice' || type === 'checkbox' || type === 'dropdown' || type === 'likert') {
+                const options = existingQuestion ? existingQuestion.options : (type === 'likert' ? ['Strongly Disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly Agree'] : ['Option 1', 'Option 2']);
+                formHTML += `
+            <div class="form-row">
+                <label>Options</label>
+                <div class="options-container">
+                    ${options.map((option, index) => `
+                        <div class="option-row">
+                            <input type="text" class="option-input" value="${option}" placeholder="Option ${index + 1}" required>
+                            <button type="button" class="remove-option">×</button>
+                        </div>
+                    `).join('')}
+                </div>
+                <button type="button" class="add-option">Add Option</button>
+            </div>
+        `;
+            } else if (type === 'grid' || type === 'multiple-grids') {
+                const rows = existingQuestion ? existingQuestion.rows : ['Row 1', 'Row 2'];
+                const columns = existingQuestion ? existingQuestion.columns : ['Column 1', 'Column 2'];
+                formHTML += `
+            <div class="form-row">
+                <label>Rows</label>
+                <div class="rows-container">
+                    ${rows.map((row, index) => `
+                        <div class="row-row">
+                            <input type="text" class="row-input" value="${row}" placeholder="Row ${index + 1}" required>
+                            <button type="button" class="remove-option">×</button>
+                        </div>
+                    `).join('')}
+                </div>
+                <button type="button" class="add-option add-row">Add Row</button>
+            </div>
+            <div class="form-row">
+                <label>Columns</label>
+                <div class="columns-container">
+                    ${columns.map((column, index) => `
+                        <div class="column-row">
+                            <input type="text" class="column-input" value="${column}" placeholder="Column ${index + 1}" required>
+                            <button type="button" class="remove-option">×</button>
+                        </div>
+                    `).join('')}
+                </div>
+                <button type="button" class="add-option add-column">Add Column</button>
+            </div>
+        `;
+                if (type === 'multiple-grids') {
+                    const grids = existingQuestion ? existingQuestion.grids : [{ id: 1, title: 'Grid 1', rows, columns }];
+                    formHTML += `
+                <div class="form-row">
+                    <label>Grids</label>
+                    <div class="grids-container">
+                        ${grids.map((grid, index) => `
+                            <div class="grid-row">
+                                <input type="text" class="grid-input" value="${grid.title}" placeholder="Grid ${index + 1} Title" required>
+                                <button type="button" class="remove-option">×</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button type="button" class="add-option add-grid">Add Grid</button>
+                </div>
+            `;
+                }
+            }
+
+            if (['multiple-choice', 'checkbox', 'dropdown', 'likert'].includes(type)) {
+                const optionRules = existingQuestion ? existingQuestion.optionRules || [] : [];
+                formHTML += `
+            <div class="option-logic-container">
+                <label>Option Logic (optional)</label>
+                <div class="option-logic-rows">
+                    ${optionRules.length > 0 ? optionRules.map(rule => `
+                        <div class="option-logic-row">
+                            ${generateOptionLogicInputs(addQuestionForm, type, rule, existingQuestion)}
+                            <button type="button" class="remove-option">×</button>
+                        </div>
+                    `).join('') : `
+                        <div class="option-logic-row">
+                            ${generateOptionLogicInputs(addQuestionForm, type, {}, existingQuestion)}
+                            <button type="button" class="remove-option">×</button>
+                        </div>
+                    `}
+                </div>
+                <button type="button" class="add-option add-option-rule">Add Option Rule</button>
+            </div>
+        `;
+            }
+
+            const skipLogic = existingQuestion ? existingQuestion.skipLogic || [] : [];
+            formHTML += `
+        <div class="skip-logic-container">
+            <label>Skip Logic (optional)</label>
+            <div class="skip-logic-rows">
+                ${skipLogic.length > 0 ? skipLogic.map(rule => `
+                    <div class="skip-logic-row">
+                        ${generateSkipLogicInputs(type, rule, existingQuestion ? existingQuestion.options || existingQuestion : null)}
+                        <select class="target-question">
+                            <option value="" disabled ${!rule.target ? 'selected' : ''}>Select question</option>
+                            <option value="submit" ${rule.target === 'submit' ? 'selected' : ''}>Submit form</option>
+                            ${questionOptions}
+                        </select>
+                        <button type="button" class="remove-option">×</button>
+                    </div>
+                `).join('') : `
+                    <div class="skip-logic-row">
+                        ${generateSkipLogicInputs(type, {}, existingQuestion ? existingQuestion.options || existingQuestion : null)}
+                        <select class="target-question">
+                            <option value="" disabled selected>Select question</option>
+                            <option value="submit">Submit form</option>
+                            ${questionOptions}
+                        </select>
+                        <button type="button" class="remove-option">×</button>
+                    </div>
+                `}
+            </div>
+            <button type="button" class="add-option add-skip-rule">Add Skip Rule</button>
+        </div>
+        <div class="form-row">
+            <label>
+                <input type="checkbox" id="required-checkbox" ${existingQuestion && existingQuestion.required ? 'checked' : ''}> Required
+            </label>
+        </div>
+        <div class="buttons">
+            <button type="button" class="prev-btn" id="cancel-question">Cancel</button>
+            <button type="button" class="next-btn" id="save-question">${existingQuestion ? 'Update' : 'Add'} Question</button>
+        </div>
+    `;
+
+            addQuestionForm.innerHTML = formHTML;
+            setupQuestionFormEventListeners(type, addQuestionForm);
+        }
+
+        function generateSkipLogicInputs(type, rule, data = null) {
+            switch (type) {
+                case 'multiple-choice':
+                case 'checkbox':
+                case 'dropdown':
+                case 'likert':
+                    return `
+                <select class="condition-value">
+                    <option value="" disabled ${!rule.option ? 'selected' : ''}>Select option</option>
+                    ${data && data.options ? data.options.map(opt => `
+                        <option value="${opt}" ${rule.option === opt ? 'selected' : ''}>${opt}</option>
+                    `).join('') : ''}
+                </select>
+            `;
+                case 'short-text':
+                case 'paragraph':
+                case 'email':
+                    return `
+                <input type="text" class="condition-value" value="${rule.value || ''}" placeholder="Enter expected value">
+            `;
+                case 'number':
+                case 'scale':
+                    return `
+                <select class="condition-operator">
+                    <option value="equals" ${rule.operator === 'equals' ? 'selected' : ''}>=</option>
+                    <option value="greater" ${rule.operator === 'greater' ? 'selected' : ''}>></option>
+                    <option value="less" ${rule.operator === 'less' ? 'selected' : ''}><</option>
+                </select>
+                <input type="number" class="condition-value" value="${rule.value || ''}" placeholder="Enter value">
+            `;
+                case 'grid':
+                case 'multiple-grids':
+                    return `
+                <select class="condition-row">
+                    <option value="" disabled ${!rule.row ? 'selected' : ''}>Select row</option>
+                    ${data && data.rows ? data.rows.map(row => `
+                        <option value="${row}" ${rule.row === row ? 'selected' : ''}>${row}</option>
+                    `).join('') : ''}
+                </select>
+                <select class="condition-value">
+                    <option value="" disabled ${!rule.value ? 'selected' : ''}>Select column</option>
+                    ${data && data.columns ? data.columns.map(col => `
+                        <option value="${col}" ${rule.value === col ? 'selected' : ''}>${col}</option>
+                    `).join('') : ''}
+                </select>
+            `;
+                default:
+                    return '';
+            }
+        }
+
+        function setupQuestionFormEventListeners(type, addQuestionForm) {
+            const optionsContainer = addQuestionForm.querySelector('.options-container');
+            const rowsContainer = addQuestionForm.querySelector('.rows-container');
+            const columnsContainer = addQuestionForm.querySelector('.columns-container');
+            const gridsContainer = addQuestionForm.querySelector('.grids-container');
+            const addOptionBtn = addQuestionForm.querySelector('.add-option:not(.add-skip-rule):not(.add-row):not(.add-column):not(.add-grid):not(.add-option-rule)');
+            const addRowBtn = addQuestionForm.querySelector('.add-row');
+            const addColumnBtn = addQuestionForm.querySelector('.add-column');
+            const addGridBtn = addQuestionForm.querySelector('.add-grid');
+            const skipLogicContainer = addQuestionForm.querySelector('.skip-logic-container');
+            const optionLogicContainer = addQuestionForm.querySelector('.option-logic-container');            if (addOptionBtn) {
+                addOptionBtn.addEventListener('click', function () {
+                    const optionCount = optionsContainer.querySelectorAll('.option-row').length + 1;
+                    const newOptionRow = document.createElement('div');
+                    newOptionRow.className = 'option-row';
+                    newOptionRow.innerHTML = `
+                <input type="text" class="option-input" placeholder="Option ${optionCount}" required>
+                <button type="button" class="remove-option">×</button>
+            `;
+                    optionsContainer.appendChild(newOptionRow);
+
+                    // Add event listener to the new option input
+                    const newInput = newOptionRow.querySelector('.option-input');
+                    newInput.addEventListener('input', function() {
+                        updateSkipLogicOptions(addQuestionForm, type);
+                        updateOptionLogicOptions(addQuestionForm);
+                    });
+
+                    newOptionRow.querySelector('.remove-option').addEventListener('click', function () {
+                        if (optionsContainer.querySelectorAll('.option-row').length > 2) {
+                            newOptionRow.remove();
+                            updateSkipLogicOptions(addQuestionForm, type);
+                            updateOptionLogicOptions(addQuestionForm);
+                        } else {
+                            showAlert('You need at least 2 options.', 'error');
+                        }
+                    });
+
+                    updateSkipLogicOptions(addQuestionForm, type);
+                    updateOptionLogicOptions(addQuestionForm);
+                });
+            }
+
+            if (rowsContainer) {
+                addRowBtn.addEventListener('click', function () {
+                    const rowCount = rowsContainer.querySelectorAll('.row-row').length + 1;
+                    const newRow = document.createElement('div');
+                    newRow.className = 'row-row';
+                    newRow.innerHTML = `
+                <input type="text" class="row-input" placeholder="Row ${rowCount}" required>
+                <button type="button" class="remove-option">×</button>
+            `;
+                    rowsContainer.appendChild(newRow);
+
+                    newRow.querySelector('.remove-option').addEventListener('click', function () {
+                        if (rowsContainer.querySelectorAll('.row-row').length > 1) {
+                            newRow.remove();
+                            updateSkipLogicOptions(addQuestionForm, type);
+                        } else {
+                            showAlert('You need at least one row.', 'error');
+                        }
+                    });
+                });
+
+                rowsContainer.querySelectorAll('.remove-option').forEach(button => {
+                    button.addEventListener('click', function () {
+                        if (rowsContainer.querySelectorAll('.row-row').length > 1) {
+                            this.parentElement.remove();
+                            updateSkipLogicOptions(addQuestionForm, type);
+                        } else {
+                            showAlert('You need at least one row.', 'error');
+                        }
+                    });
+                });
+            }
+
+            if (columnsContainer) {
+                addColumnBtn.addEventListener('click', function () {
+                    const columnCount = columnsContainer.querySelectorAll('.column-row').length + 1;
+                    const newColumn = document.createElement('div');
+                    newColumn.className = 'column-row';
+                    newColumn.innerHTML = `
+                <input type="text" class="column-input" placeholder="Column ${columnCount}" required>
+                <button type="button" class="remove-option">×</button>
+            `;
+                    columnsContainer.appendChild(newColumn);
+
+                    newColumn.querySelector('.remove-option').addEventListener('click', function () {
+                        if (columnsContainer.querySelectorAll('.column-row').length > 1) {
+                            newColumn.remove();
+                            updateSkipLogicOptions(addQuestionForm, type);
+                        } else {
+                            showAlert('You need at least one column.', 'error');
+                        }
+                    });
+                });
+
+                columnsContainer.querySelectorAll('.remove-option').forEach(button => {
+                    button.addEventListener('click', function () {
+                        if (columnsContainer.querySelectorAll('.column-row').length > 1) {
+                            this.parentElement.remove();
+                            updateSkipLogicOptions(addQuestionForm, type);
+                        } else {
+                            showAlert('You need at least one column.', 'error');
+                        }
+                    });
+                });
+            }
+
+            if (gridsContainer) {
+                addGridBtn.addEventListener('click', function () {
+                    const gridCount = gridsContainer.querySelectorAll('.grid-row').length + 1;
+                    const newGrid = document.createElement('div');
+                    newGrid.className = 'grid-row';
+                    newGrid.innerHTML = `
+                <input type="text" class="grid-input" placeholder="Grid ${gridCount} Title" required>
+                <button type="button" class="remove-option">×</button>
+            `;
+                    gridsContainer.appendChild(newGrid);
+
+                    newGrid.querySelector('.remove-option').addEventListener('click', function () {
+                        if (gridsContainer.querySelectorAll('.grid-row').length > 1) {
+                            newGrid.remove();
+                        } else {
+                            showAlert('You need at least one grid.', 'error');
+                        }
+                    });
+                });
+
+                gridsContainer.querySelectorAll('.remove-option').forEach(button => {
+                    button.addEventListener('click', function () {
+                        if (gridsContainer.querySelectorAll('.grid-row').length > 1) {
+                            this.parentElement.remove();
+                        } else {
+                            showAlert('You need at least one grid.', 'error');
+                        }
+                    });
+                });
+            }            if (optionsContainer) {
+                // Add event listeners to existing option inputs
+                optionsContainer.querySelectorAll('.option-input').forEach(input => {
+                    input.addEventListener('input', function() {
+                        updateSkipLogicOptions(addQuestionForm, type);
+                        updateOptionLogicOptions(addQuestionForm);
+                    });
+                });
+
+                optionsContainer.querySelectorAll('.remove-option').forEach(button => {
+                    button.addEventListener('click', function () {
+                        if (optionsContainer.querySelectorAll('.option-row').length > 2) {
+                            this.parentElement.remove();
+                            updateSkipLogicOptions(addQuestionForm, type);
+                            updateOptionLogicOptions(addQuestionForm);
+                        } else {
+                            showAlert('You need at least 2 options.', 'error');
+                        }
+                    });
+                });
+            }
+
+            if (skipLogicContainer) {
+                const addSkipRuleBtn = skipLogicContainer.querySelector('.add-skip-rule');
+                addSkipRuleBtn.addEventListener('click', function () {
+                    const skipLogicRows = skipLogicContainer.querySelector('.skip-logic-rows');
+                    const newSkipRow = document.createElement('div');
+                    newSkipRow.className = 'skip-logic-row';
+                    newSkipRow.innerHTML = `
+                ${generateSkipLogicInputs(type, {}, optionsContainer ? { options: Array.from(optionsContainer.querySelectorAll('.option-input')).map(input => input.value) } : null)}
+                <select class="target-question">
+                    <option value="" disabled selected>Select question</option>
+                    <option value="submit">Submit form</option>
+                    ${currentForm.questions.map((q, index) =>
+                        `<option value="${index}">${index + 1}. ${q.text}</option>`
+                    ).join('')}
+                </select>
+                <button type="button" class="remove-option">×</button>
+            `;
+                    skipLogicRows.appendChild(newSkipRow);
+
+                    newSkipRow.querySelector('.remove-option').addEventListener('click', function () {
+                        if (skipLogicRows.querySelectorAll('.skip-logic-row').length > 1) {
+                            newSkipRow.remove();
+                        } else {
+                            showAlert('You need at least one skip rule or none.', 'error');
+                        }
+                    });
+
+                    updateSkipLogicOptions(addQuestionForm, type);
+                });
+
+                skipLogicContainer.querySelectorAll('.remove-option').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const skipLogicRows = skipLogicContainer.querySelector('.skip-logic-rows');
+                        if (skipLogicRows.querySelectorAll('.skip-logic-row').length > 1) {
+                            this.parentElement.remove();
+                        } else {
+                            showAlert('You need at least one skip rule or none.', 'error');
+                        }
+                    });
+                });
+
+                updateSkipLogicOptions(addQuestionForm, type);
+            }
+
+            if (optionLogicContainer) {
+                const addOptionRuleBtn = optionLogicContainer.querySelector('.add-option-rule');
+                addOptionRuleBtn.addEventListener('click', function () {
+                    const optionLogicRows = optionLogicContainer.querySelector('.option-logic-rows');
+                    const newOptionRow = document.createElement('div');
+                    newOptionRow.className = 'option-logic-row';
+                    newOptionRow.innerHTML = `
+                ${generateOptionLogicInputs(addQuestionForm, type, {}, optionsContainer ? { options: Array.from(optionsContainer.querySelectorAll('.option-input')).map(input => input.value) } : null)}
+                <button type="button" class="remove-option">×</button>
+            `;
+                    optionLogicRows.appendChild(newOptionRow);
+
+                    newOptionRow.querySelector('.remove-option').addEventListener('click', function () {
+                        if (optionLogicRows.querySelectorAll('.option-logic-row').length > 1) {
+                            newOptionRow.remove();
+                        } else {
+                            showAlert('You need at least one option rule or none.', 'error');
+                        }
+                    });
+
+                    updateOptionLogicOptions(addQuestionForm);
+                });
+
+                optionLogicContainer.querySelectorAll('.remove-option').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const optionLogicRows = optionLogicContainer.querySelector('.option-logic-rows');
+                        if (optionLogicRows.querySelectorAll('.option-logic-row').length > 1) {
+                            this.parentElement.remove();
+                        } else {
+                            showAlert('You need at least one option rule or none.', 'error');
+                        }
+                    });
+                });
+
+                updateOptionLogicOptions(addQuestionForm);
+            }
+
+            addQuestionForm.querySelector('#cancel-question').addEventListener('click', function () {
+                addQuestionForm.classList.remove('active');
+                editingQuestionIndex = null;
+            });
+
+            addQuestionForm.querySelector('#save-question').addEventListener('click', function () {
+                const questionText = addQuestionForm.querySelector('#question-text').value;
+                if (!questionText) {
+                    showAlert('Please enter a question.', 'error');
+                    return;
+                }
+
+                const questionDescription = addQuestionForm.querySelector('#question-description').value;
+                const isRequired = addQuestionForm.querySelector('#required-checkbox').checked;
+
+                const questionData = {
+                    text: questionText,
+                    description: questionDescription,
+                    type: type,
+                    required: isRequired,
+                    skipLogic: []
+                };
+
+                if (type === 'multiple-choice' || type === 'checkbox' || type === 'dropdown' || type === 'likert') {
+                    const optionInputs = addQuestionForm.querySelectorAll('.option-input');
+                    const options = Array.from(optionInputs).map(input => input.value);
+
+                    if (options.some(option => !option)) {
+                        showAlert('Please fill in all options.', 'error');
+                        return;
+                    }
+
+                    questionData.options = options;                    const optionLogicRows = addQuestionForm.querySelectorAll('.option-logic-row');
+                    questionData.optionRules = Array.from(optionLogicRows).map(row => {
+                        const sourceQuestion = parseInt(row.querySelector('.option-logic-source').value);
+                        const sourceValue = row.querySelector('.option-logic-value').value;
+                        const hiddenOptions = Array.from(row.querySelectorAll('.hidden-option:checked')).map(cb => cb.value);
+                        return {
+                            sourceQuestion,
+                            sourceValue,
+                            hiddenOptions
+                        };
+                    }).filter(rule => !isNaN(rule.sourceQuestion) && rule.sourceValue && rule.hiddenOptions.length > 0);
+                } else if (type === 'grid' || type === 'multiple-grids') {
+                    const rowInputs = addQuestionForm.querySelectorAll('.row-input');
+                    const columnInputs = addQuestionForm.querySelectorAll('.column-input');
+                    const rows = Array.from(rowInputs).map(input => input.value);
+                    const columns = Array.from(columnInputs).map(input => input.value);
+
+                    if (rows.some(row => !row) || columns.some(col => !col)) {
+                        showAlert('Please fill in all rows and columns.', 'error');
+                        return;
+                    }
+
+                    questionData.rows = rows;
+                    questionData.columns = columns;
+
+                    if (type === 'multiple-grids') {
+                        const gridInputs = addQuestionForm.querySelectorAll('.grid-input');
+                        const grids = Array.from(gridInputs).map((input, index) => ({
+                            id: index + 1,
+                            title: input.value
+                        }));
+
+                        if (grids.some(grid => !grid.title)) {
+                            showAlert('Please fill in all grid titles.', 'error');
+                            return;
+                        }
+
+                        questionData.grids = grids;
+                    }
+                }
+
+                const skipLogicRows = addQuestionForm.querySelectorAll('.skip-logic-row');
+                questionData.skipLogic = Array.from(skipLogicRows).map(row => {
+                    const target = row.querySelector('.target-question').value;
+                    let rule = { target: target === 'submit' ? 'submit' : parseInt(target) };
+
+                    if (type === 'multiple-choice' || type === 'checkbox' || type === 'dropdown' || type === 'likert') {
+                        const option = row.querySelector('.condition-value').value;
+                        rule.option = option;
+                    } else if (type === 'short-text' || type === 'paragraph' || type === 'email') {
+                        const value = row.querySelector('.condition-value').value;
+                        rule.value = value;
+                    } else if (type === 'number' || type === 'scale') {
+                        const operator = row.querySelector('.condition-operator').value;
+                        const value = row.querySelector('.condition-value').value;
+                        rule.operator = operator;
+                        rule.value = parseFloat(value);
+                    } else if (type === 'grid' || type === 'multiple-grids') {
+                        const rowVal = row.querySelector('.condition-row').value;
+                        const column = row.querySelector('.condition-value').value;
+                        rule.row = rowVal;
+                        rule.value = column;
+                    }
+
+                    return rule;
+                }).filter(rule => rule.target !== '' && (rule.option || rule.value || rule.row));
+
+                if (editingQuestionIndex !== null) {
+                    currentForm.questions[editingQuestionIndex] = questionData;
+                    editingQuestionIndex = null;
+                } else {
+                    currentForm.questions.push(questionData);
+                }
+
+                currentForm.lastModified = new Date();
+                updateCurrentFormInfo();
+
+                addQuestionForm.classList.remove('active');
+                showAlert(`Question ${editingQuestionIndex !== null ? 'updated' : 'added'} successfully!`, 'success');
+            });
+        }
+
+        function updateSkipLogicOptions(form, type) {
+            const optionsContainer = form.querySelector('.options-container');
+            const rowsContainer = form.querySelector('.rows-container');
+            const columnsContainer = form.querySelector('.columns-container');
+            const skipLogicContainer = form.querySelector('.skip-logic-container');
+            if (!skipLogicContainer) return;
+
+            const skipLogicRows = skipLogicContainer.querySelectorAll('.skip-logic-row');
+
+            if (type === 'multiple-choice' || type === 'checkbox' || type === 'dropdown' || type === 'likert') {
+                if (!optionsContainer) return;
+                const optionInputs = optionsContainer.querySelectorAll('.option-input');
+                const options = Array.from(optionInputs).map(input => input.value).filter(val => val);
+
+                skipLogicRows.forEach(row => {
+                    const conditionSelect = row.querySelector('.condition-value');
+                    if (conditionSelect) {
+                        const currentValue = conditionSelect.value;
+                        conditionSelect.innerHTML = `
+                    <option value="" disabled ${!currentValue ? 'selected' : ''}>Select option</option>
+                    ${options.map(opt => `
+                        <option value="${opt}" ${currentValue === opt ? 'selected' : ''}>${opt}</option>
+                    `).join('')}
+                `;
+                    }
+                });
+            } else if (type === 'grid' || type === 'multiple-grids') {
+                if (!rowsContainer || !columnsContainer) return;
+                const rowInputs = rowsContainer.querySelectorAll('.row-input');
+                const columnInputs = columnsContainer.querySelectorAll('.column-input');
+                const rows = Array.from(rowInputs).map(input => input.value).filter(val => val);
+                const columns = Array.from(columnInputs).map(input => input.value).filter(val => val);
+
+                skipLogicRows.forEach(row => {
+                    const rowSelect = row.querySelector('.condition-row');
+                    const columnSelect = row.querySelector('.condition-value');
+                    if (rowSelect) {
+                        const currentRow = rowSelect.value;
+                        rowSelect.innerHTML = `
+                    <option value="" disabled ${!currentRow ? 'selected' : ''}>Select row</option>
+                    ${rows.map(row => `
+                        <option value="${row}" ${currentRow === row ? 'selected' : ''}>${row}</option>
+                    `).join('')}
+                `;
+                    }
+                    if (columnSelect) {
+                        const currentColumn = columnSelect.value;
+                        columnSelect.innerHTML = `
+                    <option value="" disabled ${!currentColumn ? 'selected' : ''}>Select column</option>
+                    ${columns.map(col => `
+                        <option value="${col}" ${currentColumn === col ? 'selected' : ''}>${col}</option>
+                    `).join('')}
+                `;
+                    }
+                });
+            }
+        }
+
+        function formatQuestionType(type) {
+            return type.split('-').map(word =>
+                word.charAt(0).toUpperCase() + word.slice(1)
+            ).join(' ');
+        }
+
+        function createQuestionElement(question, index) {
+            const questionContainer = document.createElement('div');
+            questionContainer.className = 'question-container';
+            questionContainer.id = `question-${index}`;
+
+            let inputHTML = '';
+
+            switch (question.type) {
+                case 'short-text':
+                    inputHTML = `<input type="text" id="q${index}" name="q${index}" ${question.required ? 'required' : ''}>`;
+                    break;
+                case 'paragraph':
+                    inputHTML = `<textarea id="q${index}" name="q${index}" rows="4" ${question.required ? 'required' : ''}></textarea>`;
+                    break;
+                case 'multiple-choice':
+                    inputHTML = `<div class="radio-group">
+                ${question.options.map((option, optIndex) => `
+                    <div class="radio-option">
+                        <input type="radio" id="q${index}_opt${optIndex}" name="q${index}" value="${option}" ${question.required ? 'required' : ''}>
+                        <label for="q${index}_opt${optIndex}">${option}</label>
+                    </div>
+                `).join('')}
+            </div>`;
+                    break;
+                case 'checkbox':
+                    inputHTML = `<div class="checkbox-group">
+                ${question.options.map((option, optIndex) => `
+                    <div class="checkbox-option">
+                        <input type="checkbox" id="q${index}_opt${optIndex}" name="q${index}" value="${option}">
+                        <label for="q${index}_opt${optIndex}">${option}</label>
+                    </div>
+                `).join('')}
+            </div>`;
+                    break;
+                case 'dropdown':
+                    inputHTML = `<select id="q${index}" name="q${index}" ${question.required ? 'required' : ''}>
+                <option value="" disabled selected>Choose an option</option>
+                ${question.options.map(option => `<option value="${option}">${option}</option>`).join('')}
+            </select>`;
+                    break;
+                case 'number':
+                    inputHTML = `<input type="number" id="q${index}" name="q${index}" ${question.required ? 'required' : ''}>`;
+                    break;
+                case 'email':
+                    inputHTML = `<input type="email" id="q${index}" name="q${index}" ${question.required ? 'required' : ''}>`;
+                    break;
+                case 'scale':
+                    inputHTML = `<input type="range" id="q${index}" name="q${index}" min="1" max="10" value="5" ${question.required ? 'required' : ''}>
+             <div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 14px; color: #4b5563;">
+                 <span>1</span><span>10</span>
+             </div>`;
+                    break;
+                case 'grid':
+                    inputHTML = `<div class="grid-container">
+                <div class="grid-row">
+                    <div class="grid-cell"></div>
+                    ${question.columns.map(col => `<div class="grid-cell">${col}</div>`).join('')}
+                </div>
+                ${question.rows.map((row, rowIndex) => `
+                    <div class="grid-row">
+                        <div class="grid-cell">${row}</div>
+                        ${question.columns.map((col, colIndex) => `
+                            <div class="grid-cell">
+                                <input type="radio" id="q${index}_r${rowIndex}_c${colIndex}" name="q${index}_r${rowIndex}" value="${col}" ${question.required ? 'required' : ''}>
+                            </div>
+                        `).join('')}
+                    </div>
+                `).join('')}
+            </div>`;
+                    break;
+                case 'likert':
+                    inputHTML = `<div class="grid-container likert-group">
+                <div class="grid-row">
+                    <div class="grid-cell"></div>
+                    ${question.options.map(opt => `<div class="grid-cell">${opt}</div>`).join('')}
+                </div>
+                <div class="grid-row">
+                    <div class="grid-cell">${question.text}</div>
+                    ${question.options.map((opt, optIndex) => `
+                        <div class="grid-cell">
+                            <input type="radio" id="q${index}_opt${optIndex}" name="q${index}" value="${opt}" ${question.required ? 'required' : ''}>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            <div class="explainer">Please select the option that best represents your level of agreement.</div>`;
+                    break;
+                case 'multiple-grids':
+                    inputHTML = question.grids.map((grid, gridIndex) => `
+                <div class="grid-container">
+                    <h4>${grid.title}</h4>
+                    <div class="grid-row">
+                        <div class="grid-cell"></div>
+                        ${question.columns.map(col => `<div class="grid-cell">${col}</div>`).join('')}
+                    </div>
+                    ${question.rows.map((row, rowIndex) => `
+                        <div class="grid-row">
+                            <div class="grid-cell">${row}</div>
+                            ${question.columns.map((col, colIndex) => `
+                                <div class="grid-cell">
+                                    <input type="radio" id="q${index}_g${gridIndex}_r${rowIndex}_c${colIndex}" name="q${index}_g${gridIndex}_r${rowIndex}" value="${col}" ${question.required ? 'required' : ''}>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `).join('')}
+                </div>
+            `).join('');
+                    break;
+            }
+
+            questionContainer.innerHTML = `
+        <div class="question-number">Question ${index + 1}</div>
+        <div class="question ${question.required ? 'required' : ''}">${question.text}</div>
+        ${question.description ? `<div class="description">${question.description}</div>` : ''}
+        <div class="input-group">
+            ${inputHTML}
+        </div>
+        <div class="buttons">
+            ${index > 0 ? '<button type="button" class="prev-btn" onclick="goToPreviousQuestion()">Previous</button>' : '<div></div>'}
+            ${index < currentForm.questions.length - 1 ?
+                    '<button type="button" class="next-btn" onclick="goToNextQuestion()">Next</button>' :
+                    '<button type="button" class="submit-btn" onclick="submitForm()">Submit</button>'
+                }
+        </div>
+    `;            if (['multiple-choice', 'checkbox', 'dropdown', 'short-text', 'paragraph', 'email', 'number', 'scale', 'likert'].includes(question.type)) {
+                if (question.type === 'checkbox') {
+                    // For checkbox, add event listener to all checkboxes in the group
+                    const checkboxes = questionContainer.querySelectorAll(`input[name="q${index}"]`);
+                    checkboxes.forEach(checkbox => {                        checkbox.addEventListener('change', () => {
+                            checkSkipLogic(index);
+                            // Store the responses for later use
+                            storeCurrentResponses();
+                            // Trigger option visibility update for the current question if it has option rules
+                            if (currentForm.questions[index].optionRules && currentForm.questions[index].optionRules.length > 0) {
+                                console.log(`Updating option visibility for current question ${index} from checkbox change`);
+                                updateOptionVisibility(index);
+                            }
+                        });
+                    });
+                } else {
+                    const input = questionContainer.querySelector(`#q${index}`);
+                    if (input) {                        input.addEventListener('change', () => {
+                            checkSkipLogic(index);
+                            // Store the responses for later use
+                            storeCurrentResponses();
+                            // Trigger option visibility update for the current question if it has option rules
+                            if (currentForm.questions[index].optionRules && currentForm.questions[index].optionRules.length > 0) {
+                                console.log(`Updating option visibility for current question ${index} from input change`);
+                                updateOptionVisibility(index);
+                            }
+                        });
+                    }
+                }
+            }else if (question.type === 'grid') {
+                question.rows.forEach((_, rowIndex) => {
+                    const inputs = questionContainer.querySelectorAll(`input[name="q${index}_r${rowIndex}"]`);
+                    inputs.forEach(input => {
+                        input.addEventListener('change', () => checkSkipLogic(index));
+                    });
+                });
+            } else if (question.type === 'multiple-grids') {
+                question.grids.forEach((_, gridIndex) => {
+                    question.rows.forEach((_, rowIndex) => {
+                        const inputs = questionContainer.querySelectorAll(`input[name="q${index}_g${gridIndex}_r${rowIndex}"]`);
+                        inputs.forEach(input => {
+                            input.addEventListener('change', () => checkSkipLogic(index));
+                        });
+                    });
+                });
+            }
+
+            return questionContainer;
+        }
+
+        function checkSkipLogic(index) {
+            const question = currentForm.questions[index];
+            if (!question.skipLogic || question.skipLogic.length === 0) return false;
+
+            let response;
+            if (question.type === 'multiple-choice' || question.type === 'dropdown' || question.type === 'likert') {
+                const selected = document.querySelector(`input[name="q${index}"]:checked, select#q${index}`);
+                response = selected ? selected.value : null;
+                if (response) {
+                    const rule = question.skipLogic.find(r => r.option === response);
+                    if (rule) {
+                        if (rule.target === 'submit') {
+                            submitForm();
+                            return true;
+                        } else if (rule.target >= 0 && rule.target < currentForm.questions.length) {
+                            showQuestion(rule.target);
+                            return true;
+                        }
+                    }
+                }
+            } else if (question.type === 'checkbox') {
+                const selectedCheckboxes = document.querySelectorAll(`input[name="q${index}"]:checked`);
+                response = Array.from(selectedCheckboxes).map(cb => cb.value);
+                for (const rule of question.skipLogic) {
+                    if (response.includes(rule.option)) {
+                        if (rule.target === 'submit') {
+                            submitForm();
+                            return true;
+                        } else if (rule.target >= 0 && rule.target < currentForm.questions.length) {
+                            showQuestion(rule.target);
+                            return true;
+                        }
+                    }
+                }
+            } else if (['short-text', 'paragraph', 'email'].includes(question.type)) {
+                const input = document.getElementById(`q${index}`);
+                response = input ? input.value.trim() : '';
+                const rule = question.skipLogic.find(r => r.value === response);
+                if (rule) {
+                    if (rule.target === 'submit') {
+                        submitForm();
+                        return true;
+                    } else if (rule.target >= 0 && rule.target < currentForm.questions.length) {
+                        showQuestion(rule.target);
+                        return true;
+                    }
+                }
+            } else if (question.type === 'number' || question.type === 'scale') {
+                const input = document.getElementById(`q${index}`);
+                response = input ? parseFloat(input.value) : null;
+                if (response !== null) {
+                    const rule = question.skipLogic.find(r => {
+                        if (r.operator === 'equals') return response === r.value;
+                        if (r.operator === 'greater') return response > r.value;
+                        if (r.operator === 'less') return response < r.value;
+                        return false;
+                    });
+                    if (rule) {
+                        if (rule.target === 'submit') {
+                            submitForm();
+                            return true;
+                        } else if (rule.target >= 0 && rule.target < currentForm.questions.length) {
+                            showQuestion(rule.target);
+                            return true;
+                        }
+                    }
+                }
+            } else if (question.type === 'grid' || question.type === 'multiple-grids') {
+                if (question.type === 'grid') {
+                    question.rows.forEach((row, rowIndex) => {
+                        const selected = document.querySelector(`input[name="q${index}_r${rowIndex}"]:checked`);
+                        if (selected) {
+                            const rule = question.skipLogic.find(r => r.row === row && r.value === selected.value);
+                            if (rule) {
+                                if (rule.target === 'submit') {
+                                    submitForm();
+                                    return true;
+                                } else if (rule.target >= 0 && rule.target < currentForm.questions.length) {
+                                    showQuestion(rule.target);
+                                    return true;
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    question.grids.forEach((grid, gridIndex) => {
+                        question.rows.forEach((row, rowIndex) => {
+                            const selected = document.querySelector(`input[name="q${index}_g${gridIndex}_r${rowIndex}"]:checked`);
+                            if (selected) {
+                                const rule = question.skipLogic.find(r => r.row === row && r.value === selected.value);
+                                if (rule) {
+                                    if (rule.target === 'submit') {
+                                        submitForm();
+                                        return true;
+                                    } else if (rule.target >= 0 && rule.target < currentForm.questions.length) {
+                                        showQuestion(rule.target);
+                                        return true;
+                                    }
+                                }
+                            }
+                        });
+                    });
+                }
+            }
+            return false;
+        }        function showQuestion(index) {
+            if (index < 0 || index >= currentForm.questions.length) return;
+
+            // Store current responses before switching questions
+            storeCurrentResponses();
+
+            const surveyForm = document.getElementById('survey-form');
+            surveyForm.innerHTML = '';
+
+            currentQuestionIndex = index;
+            const questionElement = createQuestionElement(currentForm.questions[index], index);
+            surveyForm.appendChild(questionElement);
+            questionElement.classList.add('active');
+
+            updateProgressBar();
+
+            const inputs = questionElement.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('change', validateInput);
+            });
+
+            // Update option visibility for the current question
+            setTimeout(() => {
+                if (currentForm.questions[index].optionRules && currentForm.questions[index].optionRules.length > 0) {
+                    console.log(`Checking option visibility for question ${index} on load`);
+                    updateOptionVisibility(index);
+                }
+            }, 50);
+
+            questionElement.classList.add('slide-in');
+        }
+        function goToNextQuestion() {
+            const currentQuestion = currentForm.questions[currentQuestionIndex];
+            if (currentQuestion.required && !validateInput()) {
+                showAlert('Please answer the required question before proceeding.', 'error');
+                return;
+            }
+
+            if (!checkSkipLogic(currentQuestionIndex) && currentQuestionIndex < currentForm.questions.length - 1) {
+                showQuestion(currentQuestionIndex + 1);
+            }
+        }
+
+        function goToPreviousQuestion() {
+            if (currentQuestionIndex > 0) {
+                showQuestion(currentQuestionIndex - 1);
+            }
+        }
+
+        function validateInput() {
+            const currentContainer = document.getElementById(`question-${currentQuestionIndex}`);
+            const inputs = currentContainer.querySelectorAll('input, select, textarea');
+            let isValid = true;
+
+            inputs.forEach(input => {
+                if (input.required && !input.value) {
+                    isValid = false;
+                }
+                if (input.type === 'radio' || input.type === 'checkbox') {
+                    const groupName = input.name;
+                    const groupInputs = currentContainer.querySelectorAll(`input[name="${groupName}"]:checked`);
+                    if (input.required && groupInputs.length === 0) {
+                        isValid = false;
+                    }
+                }
+            });
+
+            return isValid;
+        }
+
+        function submitForm() {
+            const currentQuestion = currentForm.questions[currentQuestionIndex];
+            if (currentQuestion.required && !validateInput()) {
+                showAlert('Please answer the required question before submitting.', 'error');
+                return;
+            }
+
+            showLoading('Submitting form...', 'Please wait while we process your response.');
+
+            setTimeout(() => {
+                hideLoading();
+                document.getElementById('survey-form').style.display = 'none';
+                document.querySelector('.success-message').style.display = 'block';
+                updateProgressBar(100);
+            }, 1000);
+        }
+
+        function updateProgressBar(percentage = null) {
+            const progressBar = document.querySelector('.progress-bar');
+            if (percentage !== null) {
+                progressBar.style.width = `${percentage}%`;
+            } else {
+                const progress = ((currentQuestionIndex + 1) / currentForm.questions.length) * 100;
+                progressBar.style.width = `${progress}%`;
+            }
+        }
+
+        function clearForm() {
+            const surveyForm = document.getElementById('survey-form');
+            // Only clear everything if not in preview mode
+            if (!isPreviewMode) {
+                surveyForm.innerHTML = '';
+            } else {
+                // In preview mode, keep the back button but remove the question
+                const questionContainers = surveyForm.querySelectorAll('.question-container');
+                questionContainers.forEach(container => {
+                    container.remove();
+                });
+            }
+            currentQuestionIndex = 0;
+            updateProgressBar(0);
+            document.querySelector('.success-message').style.display = 'none';
+        }        function resetForm() {
+            clearForm();
+            const surveyForm = document.getElementById('survey-form');
+            surveyForm.reset();
+        }
+
+        function updateCurrentFormInfo() {
+            document.getElementById('current-form-title').textContent = currentForm.title;
+            document.getElementById('current-form-count').textContent = currentForm.questions.length;
+            document.getElementById('current-form-id').textContent = currentForm.id;
+        }
+
+        function generateShareableLink() {
+            if (currentForm.questions.length === 0) {
+                showAlert('Please add at least one question before generating a link.', 'error');
+                return;
+            }
+
+            // Generate a unique form ID if not already published
+            if (!currentForm.isPublished) {
+                currentForm.isPublished = true;
+                currentForm.publishedAt = new Date();
+                
+                // Save form to localStorage
+                saveFormToStorage();
+                
+                showAlert('Form published successfully!', 'success');
+            }
+
+            // Generate the shareable link
+            const baseUrl = window.location.origin + window.location.pathname;
+            const shareableLink = `${baseUrl}?form=${currentForm.id}&mode=fill`;
+            currentForm.shareableLink = shareableLink;
+
+            // Generate embed code
+            const embedCode = `<iframe src="${shareableLink}" width="100%" height="600" frameborder="0" scrolling="auto" title="${currentForm.title}"></iframe>`;
+
+            // Update UI
+            document.getElementById('shareable-link').value = shareableLink;
+            document.getElementById('embed-code').value = embedCode;
+            
+            // Generate QR Code (simple QR code generation)
+            generateQRCode(shareableLink);
+            
+            // Show share section
+            document.getElementById('share-section').style.display = 'block';
+            document.getElementById('responses-section').style.display = 'none';
+            
+            updateCurrentFormInfo();
+        }
+
+        function generateQRCode(text) {
+            const qrContainer = document.getElementById('qr-code');
+            qrContainer.innerHTML = `
+                <div style="padding: 20px; background: white; border-radius: 10px; display: inline-block;">
+                    <div style="font-size: 12px; text-align: center; margin-bottom: 10px; color: #6b7280;">
+                        QR Code for Form Link
+                    </div>
+                    <div style="width: 150px; height: 150px; background: #f3f4f6; border: 2px dashed #d1d5db; display: flex; align-items: center; justify-content: center; color: #6b7280; text-align: center; font-size: 14px;">
+                        QR Code<br>(Generated on publish)
+                    </div>
+                    <div style="font-size: 11px; text-align: center; margin-top: 10px; color: #9ca3af; word-break: break-all;">
+                        ${text.length > 50 ? text.substring(0, 50) + '...' : text}
+                    </div>
+                </div>
+            `;
+        }
+
+        function copyShareableLink() {
+            const linkInput = document.getElementById('shareable-link');
+            linkInput.select();
+            linkInput.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(linkInput.value).then(() => {
+                showAlert('Link copied to clipboard!', 'success');
+            }).catch(() => {
+                showAlert('Failed to copy link. Please copy manually.', 'error');
+            });
+        }
+
+        function copyEmbedCode() {
+            const embedInput = document.getElementById('embed-code');
+            embedInput.select();
+            embedInput.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(embedInput.value).then(() => {
+                showAlert('Embed code copied to clipboard!', 'success');
+            }).catch(() => {
+                showAlert('Failed to copy embed code. Please copy manually.', 'error');
+            });
+        }
+
+        function showResponsesView() {
+            if (!currentForm.isPublished) {
+                showAlert('Please generate a shareable link first to collect responses.', 'error');
+                return;
+            }
+
+            // Load responses from storage
+            loadResponsesFromStorage();
+            
+            // Update responses summary
+            document.getElementById('total-responses').textContent = currentForm.responses.length;
+            
+            // Display responses
+            displayResponses();
+            
+            // Show responses section
+            document.getElementById('responses-section').style.display = 'block';
+            document.getElementById('share-section').style.display = 'none';
+        }
+
+        function displayResponses() {
+            const responsesList = document.getElementById('responses-list');
+            responsesList.innerHTML = '';
+
+            if (currentForm.responses.length === 0) {
+                responsesList.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 40px;">No responses yet. Share your form to start collecting responses!</p>';
+                return;
+            }
+
+            currentForm.responses.forEach((response, index) => {
+                const responseItem = document.createElement('div');
+                responseItem.className = 'response-item';
+                
+                const timestamp = new Date(response.submittedAt).toLocaleString();
+                const screeningStatus = calculateScreeningStatus(response);
+                
+                responseItem.innerHTML = `
+                    <div class="response-header">
+                        <span>Response #${index + 1}</span>
+                        <div>
+                            <span class="screening-status ${screeningStatus.toLowerCase()}">${screeningStatus}</span>
+                            <span class="response-timestamp">${timestamp}</span>
+                        </div>
+                    </div>
+                    <div class="response-answers">
+                        ${Object.entries(response.answers).map(([questionIndex, answer]) => {
+                            const question = currentForm.questions[parseInt(questionIndex)];
+                            if (!question) return '';
+                            
+                            let displayAnswer = answer;
+                            if (Array.isArray(answer)) {
+                                displayAnswer = answer.join(', ');
+                            } else if (typeof answer === 'object' && answer !== null) {
+                                displayAnswer = JSON.stringify(answer);
+                            }
+                            
+                            return `
+                                <div class="response-answer">
+                                    <div class="answer-question">${question.text}</div>
+                                    <div class="answer-value">${displayAnswer || 'No answer'}</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
+                
+                responsesList.appendChild(responseItem);
+            });
+        }
+
+        function calculateScreeningStatus(response) {
+            // Simple screening logic - you can customize this based on your needs
+            const totalQuestions = currentForm.questions.length;
+            const answeredQuestions = Object.keys(response.answers).length;
+            
+            if (answeredQuestions === totalQuestions) {
+                return 'Passed';
+            } else if (answeredQuestions > totalQuestions * 0.5) {
+                return 'Pending';
+            } else {
+                return 'Failed';
+            }
+        }
+
+        function exportResponses() {
+            if (currentForm.responses.length === 0) {
+                showAlert('No responses to export.', 'error');
+                return;
+            }
+
+            // Create CSV content
+            let csvContent = 'Response ID,Submitted At,Screening Status';
+            
+            // Add question headers
+            currentForm.questions.forEach((question, index) => {
+                csvContent += `,"${question.text.replace(/"/g, '""')}"`;
+            });
+            csvContent += '\n';
+
+            // Add response data
+            currentForm.responses.forEach((response, responseIndex) => {
+                const timestamp = new Date(response.submittedAt).toISOString();
+                const screeningStatus = calculateScreeningStatus(response);
+                
+                csvContent += `${responseIndex + 1},"${timestamp}","${screeningStatus}"`;
+                
+                currentForm.questions.forEach((question, questionIndex) => {
+                    const answer = response.answers[questionIndex] || '';
+                    let csvAnswer = '';
+                    
+                    if (Array.isArray(answer)) {
+                        csvAnswer = answer.join('; ');
+                    } else if (typeof answer === 'object' && answer !== null) {
+                        csvAnswer = JSON.stringify(answer);
+                    } else {
+                        csvAnswer = String(answer);
+                    }
+                    
+                    csvContent += `,"${csvAnswer.replace(/"/g, '""')}"`;
+                });
+                
+                csvContent += '\n';
+            });
+
+            // Download CSV
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `${currentForm.title.replace(/[^a-z0-9]/gi, '_')}_responses.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showAlert('Responses exported successfully!', 'success');
+        }
+
+        function clearAllResponses() {
+            if (!confirm('Are you sure you want to clear all responses? This action cannot be undone.')) {
+                return;
+            }
+
+            currentForm.responses = [];
+            saveFormToStorage();
+            displayResponses();
+            document.getElementById('total-responses').textContent = '0';
+            
+            showAlert('All responses cleared successfully.', 'success');
+        }
+
+        function saveFormToStorage() {
+            // Save current form to localStorage
+            localStorage.setItem(`form_${currentForm.id}`, JSON.stringify(currentForm));
+            
+            // Update forms index
+            let formsIndex = JSON.parse(localStorage.getItem('forms_index') || '[]');
+            if (!formsIndex.includes(currentForm.id)) {
+                formsIndex.push(currentForm.id);
+                localStorage.setItem('forms_index', JSON.stringify(formsIndex));
+            }
+        }
+
+        function loadResponsesFromStorage() {
+            const savedForm = localStorage.getItem(`form_${currentForm.id}`);
+            if (savedForm) {
+                const parsedForm = JSON.parse(savedForm);
+                currentForm.responses = parsedForm.responses || [];
+            }
+        }
+
+        function loadStandaloneForm(formId) {
+            const savedForm = localStorage.getItem(`form_${formId}`);
+            if (!savedForm) {
+                showFormExpired();
+                return;
+            }
+
+            currentForm = JSON.parse(savedForm);
+            
+            // Set up standalone mode
+            document.body.classList.add('standalone-form');
+            document.querySelector('.container').classList.add('preview-mode');
+            
+            // Update title and subtitle
+            document.getElementById('page-title').textContent = currentForm.title;
+            document.getElementById('page-subtitle').textContent = currentForm.settings.customMessage || 'Please complete this form';
+            
+            // Hide form builder completely
+            document.querySelector('.form-builder').style.display = 'none';
+            
+            // Start the form
+            showQuestion(0);
+            
+            // Override submit function for standalone mode
+            window.originalSubmitForm = window.submitForm;
+            window.submitForm = submitStandaloneForm;
+        }
+
+        function showFormExpired() {
+            const container = document.querySelector('.container');
+            container.innerHTML = `
+                <div class="form-expired">
+                    <h2>Form Not Found</h2>
+                    <p>This form link is invalid or has expired.</p>
+                    <p>Please contact the form creator for a valid link.</p>
+                </div>
+            `;
+        }
+
+        function submitStandaloneForm() {
+            const currentQuestion = currentForm.questions[currentQuestionIndex];
+            if (currentQuestion.required && !validateInput()) {
+                showAlert('Please answer the required question before submitting.', 'error');
+                return;
+            }
+
+            // Collect all form responses
+            const responses = {};
+            currentForm.questions.forEach((question, index) => {
+                if (question.type === 'multiple-choice' || question.type === 'dropdown' || question.type === 'likert') {
+                    const selected = document.querySelector(`input[name="q${index}"]:checked, select#q${index}`);
+                    responses[index] = selected ? selected.value : null;
+                } else if (question.type === 'checkbox') {
+                    const selectedCheckboxes = document.querySelectorAll(`input[name="q${index}"]:checked`);
+                    responses[index] = Array.from(selectedCheckboxes).map(cb => cb.value);
+                } else if (question.type === 'short-text' || question.type === 'paragraph' || question.type === 'email') {
+                    const input = document.getElementById(`q${index}`);
+                    responses[index] = input ? input.value.trim() : '';
+                } else if (question.type === 'number' || question.type === 'scale') {
+                    const input = document.getElementById(`q${index}`);
+                    responses[index] = input ? parseFloat(input.value) : null;
+                } else if (question.type === 'grid') {
+                    const gridResponses = {};
+                    question.rows.forEach((row, rowIndex) => {
+                        const selected = document.querySelector(`input[name="q${index}_r${rowIndex}"]:checked`);
+                        if (selected) {
+                            gridResponses[row] = selected.value;
+                        }
+                    });
+                    responses[index] = gridResponses;
+                } else if (question.type === 'multiple-grids') {
+                    const multiGridResponses = {};
+                    question.grids.forEach((grid, gridIndex) => {
+                        const gridData = {};
+                        question.rows.forEach((row, rowIndex) => {
+                            const selected = document.querySelector(`input[name="q${index}_g${gridIndex}_r${rowIndex}"]:checked`);
+                            if (selected) {
+                                gridData[row] = selected.value;
+                            }
+                        });
+                        multiGridResponses[grid.title] = gridData;
+                    });
+                    responses[index] = multiGridResponses;
+                }
+            });
+
+            showLoading('Submitting form...', 'Please wait while we process your response.');
+
+            // Simulate submission delay
+            setTimeout(() => {
+                // Save response
+                const responseData = {
+                    id: generateUniqueId(),
+                    submittedAt: new Date().toISOString(),
+                    answers: responses,
+                    userAgent: navigator.userAgent,
+                    ipAddress: 'Unknown' // In a real application, you'd get this from server
+                };
+
+                // Load current form, add response, and save back
+                const currentSavedForm = JSON.parse(localStorage.getItem(`form_${currentForm.id}`));
+                if (!currentSavedForm.responses) {
+                    currentSavedForm.responses = [];
+                }
+                currentSavedForm.responses.push(responseData);
+                localStorage.setItem(`form_${currentForm.id}`, JSON.stringify(currentSavedForm));
+
+                hideLoading();
+                document.getElementById('survey-form').style.display = 'none';
+                
+                // Show custom success message
+                const successDiv = document.querySelector('.success-message');
+                successDiv.querySelector('h2').textContent = 'Thank You!';
+                successDiv.querySelector('p').textContent = currentForm.settings.customMessage || 'Your response has been recorded successfully.';
+                
+                // Hide "Submit Another Response" button in standalone mode
+                successDiv.querySelector('#create-another').style.display = 'none';
+                
+                successDiv.style.display = 'block';
+                updateProgressBar(100);
+            }, 1000);
+        }
+
+        function showLoading(title, message) {
+            document.getElementById('loading-title').textContent = title;
+            document.getElementById('loading-message').textContent = message;
+            document.getElementById('loading-overlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-overlay').style.display = 'none';
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.textContent = message;
+            document.querySelector('.content').prepend(alertDiv);
+            setTimeout(() => alertDiv.remove(), 5000);
+        }
+
+        function storeCurrentResponses() {
+            // Store all current form responses for option visibility logic
+            currentForm.questions.forEach((question, qIndex) => {
+                if (question.type === 'multiple-choice' || question.type === 'dropdown' || question.type === 'likert') {
+                    const selected = document.querySelector(`input[name="q${qIndex}"]:checked, select#q${qIndex}`);
+                    storedResponses[qIndex] = selected ? selected.value : null;
+                } else if (question.type === 'checkbox') {
+                    const selectedCheckboxes = document.querySelectorAll(`input[name="q${qIndex}"]:checked`);
+                    storedResponses[qIndex] = Array.from(selectedCheckboxes).map(cb => cb.value);
+                } else if (question.type === 'short-text' || question.type === 'paragraph' || question.type === 'email') {
+                    const input = document.getElementById(`q${qIndex}`);
+                    storedResponses[qIndex] = input ? input.value.trim() : '';
+                } else if (question.type === 'number' || question.type === 'scale') {
+                    const input = document.getElementById(`q${qIndex}`);
+                    storedResponses[qIndex] = input ? parseFloat(input.value) : null;
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

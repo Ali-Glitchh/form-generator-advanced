@@ -1,0 +1,77 @@
+/* Add this CSS to your existing stylesheet */
+.survey-section {
+    padding: 60px 0;
+    background: #f8fafc;
+}
+
+.survey-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.survey-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.survey-header h2 {
+    font-size: 32px;
+    color: #1f2937;
+    margin-bottom: 15px;
+}
+
+.survey-header p {
+    font-size: 18px;
+    color: #6b7280;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-embed-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin: 0 auto;
+}
+
+.form-iframe {
+    width: 100%;
+    height: 600px;
+    border: none;
+    display: block;
+}
+
+.loading-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+    color: #6b7280;
+}
+
+.form-unavailable {
+    text-align: center;
+    padding: 40px;
+    color: #dc2626;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .survey-section {
+        padding: 40px 0;
+    }
+    
+    .survey-header h2 {
+        font-size: 24px;
+    }
+    
+    .survey-header p {
+        font-size: 16px;
+    }
+    
+    .form-iframe {
+        height: 500px;
+    }
+}

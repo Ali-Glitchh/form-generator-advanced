@@ -1,0 +1,93 @@
+<!-- Example: Adding survey buttons to your existing wrapper -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Existing Website</title>
+    <!-- Your existing CSS and meta tags -->
+    <style>
+        /* Add these styles to your existing CSS */
+        .survey-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #6d28d9 0%, #3b0764 100%);
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 10px;
+        }
+        
+        .survey-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(109, 40, 217, 0.3);
+        }
+        
+        .survey-section {
+            background: #f8fafc;
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Your existing header/navigation -->
+    <header>
+        <nav>
+            <!-- Your existing navigation -->
+        </nav>
+    </header>
+
+    <!-- Your existing content -->
+    <main>
+        <!-- Your existing sections -->
+        
+        <!-- NEW: Add this section where you want survey links -->
+        <section class="survey-section">
+            <h2>Help Us Improve Our Services</h2>
+            <p>Please take a moment to complete our surveys. Your feedback is valuable to us!</p>
+            
+            <!-- REPLACE THESE URLs WITH YOUR ACTUAL FORM LINKS -->
+            <a href="formgenerator.html?form=customer_satisfaction_123&mode=fill" 
+               class="survey-button" target="_blank">
+                📊 Customer Satisfaction Survey
+            </a>
+            
+            <a href="formgenerator.html?form=product_feedback_456&mode=fill" 
+               class="survey-button" target="_blank">
+                💡 Product Feedback Survey
+            </a>
+            
+            <a href="formgenerator.html?form=market_research_789&mode=fill" 
+               class="survey-button" target="_blank">
+                📈 Market Research Survey
+            </a>
+        </section>
+        
+        <!-- Your existing content continues -->
+    </main>
+
+    <!-- Your existing footer -->
+    <footer>
+        <!-- Your existing footer content -->
+    </footer>
+
+    <!-- Your existing scripts -->
+    <script>
+        // Optional: Track when people click survey links
+        document.querySelectorAll('.survey-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const surveyType = this.textContent.trim();
+                console.log('Survey clicked:', surveyType);
+                
+                // You can add analytics tracking here
+                // gtag('event', 'survey_click', { survey_type: surveyType });
+            });
+        });
+    </script>
+</body>
+</html>
